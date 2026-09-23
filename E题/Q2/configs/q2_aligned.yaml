@@ -28,6 +28,7 @@ training:
   bridge_warmup_epochs: 3
 missing_aug:
   probability: 0.80
+  modalities_per_sample: [1, 2]
   modality_combo_weights: {T: 1.0, A: 1.0, V: 1.0, TA: 0.7, TV: 0.7, AV: 0.7}
   length_bins:
     short: [1, 4, 0.45]

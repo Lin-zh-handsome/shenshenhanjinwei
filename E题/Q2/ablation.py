@@ -19,8 +19,10 @@ def ablate(cfg):
     for variant in range(6):
         out = root if variant == 5 else root/'ablation'/f'A{variant}'
         checkpoint = out/'best_joint.pt'
-        if not checkpoint.exists():
+        if variant != 5:
             train_variant(cfg, datasets, variant, out, root/'bridge_warmup.pt')
+        elif not checkpoint.exists():
+            raise FileNotFoundError('Train the full A5 model before ablation')
         model, ckpt = load_model(checkpoint, device)
         clean, _ = predict_dataset(model, datasets['valid'], device, cfg['training']['batch_size'])
         masked, _ = predict_dataset(model, datasets['valid'], device, cfg['training']['batch_size'],

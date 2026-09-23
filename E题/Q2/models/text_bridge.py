@@ -18,8 +18,9 @@ class TextFeatureBridge(nn.Module):
         b, _, t = text_bert.shape
         ids = text_bert[:, 0].clamp(0, self.token.num_embeddings - 1)
         typ = text_bert[:, 2].clamp(0, 1)
-        h = self.token(ids) + self.position(torch.arange(t, device=ids.device))[None] + self.token_type(typ)
+        token_embed = self.token(ids)
         if text_missing_mask is not None:
-            h = torch.where(text_missing_mask[..., None], self.missing_token[None, None, :], h)
+            token_embed = torch.where(text_missing_mask[..., None], self.missing_token[None, None, :], token_embed)
+        h = token_embed + self.position(torch.arange(t, device=ids.device))[None] + self.token_type(typ)
         h = self.encoder(h, src_key_padding_mask=~shared_valid_mask)
         return h, self.teacher_head(h)

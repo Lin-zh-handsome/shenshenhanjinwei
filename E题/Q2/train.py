@@ -48,7 +48,7 @@ def prewarm_bridge(model, train_ds, valid_ds, cfg, device, path):
             opt.zero_grad(set_to_none=True)
             loss.backward()
             opt.step()
-            train_loss.append(float(loss))
+            train_loss.append(float(loss.detach()))
         model.text_bridge.eval()
         val_loss = []
         with torch.no_grad():
@@ -109,10 +109,12 @@ def train_variant(cfg, datasets, variant=5, out=None, warmup_path=None):
             scaler.scale(loss).backward()
             scaler.unscale_(opt)
             torch.nn.utils.clip_grad_norm_(model.parameters(), cfg['training']['grad_clip'])
+            scale_before = scaler.get_scale()
             scaler.step(opt)
             scaler.update()
-            scheduler.step()
-            losses.append(float(loss))
+            if scaler.get_scale() >= scale_before:
+                scheduler.step()
+            losses.append(float(loss.detach()))
         clean_m, _ = predict_dataset(model, datasets['valid'], device, batch_size)
         missing_m, _ = predict_dataset(model, datasets['valid'], device, batch_size,
                                        missing_fn=lambda v,o: fixed_missing(v, o, seed=101, rate=0.30))

@@ -1,5 +1,5 @@
 __pycache__/
 *.pyc
 outputs/q2/*.pt
-outputs/q2/ablation/**/*.pt
+outputs/q2/**/*.pt
 *.log

@@ -19,7 +19,8 @@ def compute_loss(masked, clean, batch, valid, original_missing, artificial_missi
     if variant >= 3:
         for m in 'TAV':
             target = clean['proj'][m].detach() if clean is not None else masked['proj'][m].detach()
-            rec = rec + masked_smooth_l1(masked['recon'][m], target, artificial_missing[m])
+            rec = rec + masked_smooth_l1(masked['recon'][m], target,
+                                         artificial_missing[m] & ~original_missing[m])
         rec = rec / 3
     agreement = F.smooth_l1_loss(masked['cls_prob'][:, 2] - masked['cls_prob'][:, 0], masked['reg_pred']/3)
     total = lc['cls']*cls + lc['reg']*reg + lc['text_bridge']*bridge + lc['cls_reg_agreement']*agreement

@@ -1,0 +1,17 @@
+source:
+  checkout: /home/hanjinwei/math/baselines/LNLN
+  commit: 80a052c62b7b3b7a6cb6956846e9d9c121f56eda
+  official_config: configs/train_mosei.yaml
+  bert_pretrained: /home/hanjinwei/math/models/q1_doc03/bert-base-uncased
+paths:
+  aligned_pkl: /home/hanjinwei/math/data/E题数据/附件2-数据集特征文件/aligned_50.pkl
+  output_dir: outputs/q2/lnln_baseline
+training:
+  seed: 1111
+  batch_size: 16
+  epochs: 200
+  early_stop_patience: 20
+  train_mask: official_random
+evaluation:
+  missing_rate: 0.30
+  seeds: [101, 102, 103]

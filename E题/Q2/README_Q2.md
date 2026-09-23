@@ -45,3 +45,7 @@ vision    -> Vision Adapter      -> Span Geometry -> Temporal Reconstruction --+
 - CMAD: *Correlation-Aware and Modalities-Aware Distillation for Multimodal Sentiment Analysis with Missing Modalities*, ICCV 2025。
 
 本实现独立构造连续区间增强、区间几何编码、时间重建和逐时刻可靠性融合；引用上述文献时不将通用重建或门控思想称为首创。
+
+## 独立 LNLN 基线
+
+`baseline_lnln/` 保留官方 LNLN 网络与损失，从固定 Git 提交的官方仓库导入。其适配脚本只处理本赛题的 aligned 输入、验证集选模和连续区间评估，详情及复现命令见 `baseline_lnln/README.md`。LNLN 是独立比较对象，其 DMC/DMML 不进入 SRF-MSA 主模型。
