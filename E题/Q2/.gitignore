@@ -2,4 +2,5 @@ __pycache__/
 *.pyc
 outputs/q2/*.pt
 outputs/q2/**/*.pt
+outputs/q2_preliminary_stopped_*/
 *.log
