@@ -1,0 +1,14 @@
+COMMAND: CONDA_ROOT/envs/math/bin/mfa g2p ./work/mfa_corpus english_us_arpa ./work/mfa_g2p_oov.dict --dictionary_path Q1_MODEL_DIR/english_us_arpa_dictionary.dict --num_jobs 8 --overwrite
+
+STDOUT:
+ 100% ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━ 100/100  [ 0:00:01 < 0:00:00 , ? it/s ]
+ 100% ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━ 30/30  [ 0:00:02 < 0:00:00 , 14 it/s ]
+
+STDERR:
+ INFO     Setting up corpus information...                                      
+ INFO     Found 37 speakers across 100 files, average number of utterances per  
+          speaker: 2.7027027027027026                                           
+ INFO     Jobs already initialized.                                             
+ INFO     Text already normalized.                                              
+ INFO     Generating pronunciations...                                          
+ INFO     Done! Everything took 4.539 seconds                                   

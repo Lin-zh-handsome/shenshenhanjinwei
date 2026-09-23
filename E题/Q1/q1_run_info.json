@@ -1,0 +1,133 @@
+{
+  "sample_count": 100,
+  "window_sec": 0.5,
+  "max_time_bins": 59,
+  "feature_shapes": {
+    "text_features": [
+      100,
+      59,
+      128
+    ],
+    "audio_features": [
+      100,
+      59,
+      40
+    ],
+    "vision_features": [
+      100,
+      59,
+      52
+    ]
+  },
+  "feature_definitions": {
+    "text": "Contextual last-layer wordpiece mean embeddings from generic BERT, 128 dimensions; aligned word vectors duration-weight averaged in each window.",
+    "audio_frame_features": [
+      "mfcc_c00",
+      "mfcc_c01",
+      "mfcc_c02",
+      "mfcc_c03",
+      "mfcc_c04",
+      "mfcc_c05",
+      "mfcc_c06",
+      "mfcc_c07",
+      "mfcc_c08",
+      "mfcc_c09",
+      "mfcc_c10",
+      "mfcc_c11",
+      "mfcc_c12",
+      "rms",
+      "zero_crossing_rate",
+      "yin_f0_hz",
+      "spectral_centroid_hz",
+      "spectral_bandwidth_hz",
+      "spectral_rolloff_hz",
+      "spectral_flatness"
+    ],
+    "audio": "20 frame descriptors (13 MFCC + RMS, zero-crossing rate, YIN F0, spectral centroid, bandwidth, rolloff, flatness); per-window mean and standard deviation = 40 dimensions.",
+    "vision": [
+      "_neutral",
+      "browDownLeft",
+      "browDownRight",
+      "browInnerUp",
+      "browOuterUpLeft",
+      "browOuterUpRight",
+      "cheekPuff",
+      "cheekSquintLeft",
+      "cheekSquintRight",
+      "eyeBlinkLeft",
+      "eyeBlinkRight",
+      "eyeLookDownLeft",
+      "eyeLookDownRight",
+      "eyeLookInLeft",
+      "eyeLookInRight",
+      "eyeLookOutLeft",
+      "eyeLookOutRight",
+      "eyeLookUpLeft",
+      "eyeLookUpRight",
+      "eyeSquintLeft",
+      "eyeSquintRight",
+      "eyeWideLeft",
+      "eyeWideRight",
+      "jawForward",
+      "jawLeft",
+      "jawOpen",
+      "jawRight",
+      "mouthClose",
+      "mouthDimpleLeft",
+      "mouthDimpleRight",
+      "mouthFrownLeft",
+      "mouthFrownRight",
+      "mouthFunnel",
+      "mouthLeft",
+      "mouthLowerDownLeft",
+      "mouthLowerDownRight",
+      "mouthPressLeft",
+      "mouthPressRight",
+      "mouthPucker",
+      "mouthRight",
+      "mouthRollLower",
+      "mouthRollUpper",
+      "mouthShrugLower",
+      "mouthShrugUpper",
+      "mouthSmileLeft",
+      "mouthSmileRight",
+      "mouthStretchLeft",
+      "mouthStretchRight",
+      "mouthUpperUpLeft",
+      "mouthUpperUpRight",
+      "noseSneerLeft",
+      "noseSneerRight"
+    ],
+    "vision_note": "MediaPipe Face Landmarker blendshape scores are facial-shape/action proxies, not emotion labels or AU ground truth.",
+    "masks": "Separate time, text, audio, and detected-face masks; padded time windows contain NaN edges and zero feature vectors."
+  },
+  "models": {
+    "mfa_acoustic": "Q1_MODEL_DIR/english_us_arpa_acoustic.zip",
+    "mfa_dictionary_base": "Q1_MODEL_DIR/english_us_arpa_dictionary.dict",
+    "mfa_dictionary_augmented": "./work/english_us_arpa_augmented.dict",
+    "text_encoder": "Q1_MODEL_DIR/bert_uncased_L-2-H-128_A-2",
+    "face_landmarker": "Q1_MODEL_DIR/face_landmarker.task"
+  },
+  "alignment_settings": {
+    "beam": 100,
+    "retry_beam": 400,
+    "g2p_model": "english_us_arpa"
+  },
+  "device": "cuda",
+  "package_versions": {
+    "montreal-forced-aligner": "3.4.2",
+    "kalpy": "not-installed",
+    "numpy": "2.4.6",
+    "pandas": "3.0.6",
+    "librosa": "0.11.0",
+    "soundfile": "0.14.0",
+    "torch": "2.12.1+cu130",
+    "transformers": "5.17.0",
+    "mediapipe": "1.0.1",
+    "av": "18.1.0"
+  },
+  "external_tool_versions": {
+    "ffmpeg": "ffmpeg version 7.1.1 Copyright (c) 2000-2025 the FFmpeg developers"
+  },
+  "feature_archive_bytes": 1111937
+}
