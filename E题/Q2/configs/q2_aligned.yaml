@@ -1,0 +1,38 @@
+seed: 42
+device: auto
+paths:
+  aligned_pkl: /home/hanjinwei/math/data/E题数据/附件2-数据集特征文件/aligned_50.pkl
+  attachment3_dir: /home/hanjinwei/math/data/E题数据/附件3-模态缺失特征样本/对齐版本
+  output_dir: outputs/q2
+runtime:
+  num_workers: 0
+  amp: true
+model:
+  vocab_size: 30522
+  max_len: 50
+  d_model: 128
+  n_heads: 4
+  text_layers: 2
+  temporal_layers: 2
+  fusion_layers: 2
+  ff_dim: 256
+  dropout: 0.15
+training:
+  batch_size: 32
+  epochs: 60
+  lr: 0.0002
+  weight_decay: 0.0001
+  grad_clip: 1.0
+  warmup_ratio: 0.05
+  early_stop_patience: 10
+  bridge_warmup_epochs: 3
+missing_aug:
+  probability: 0.80
+  modality_combo_weights: {T: 1.0, A: 1.0, V: 1.0, TA: 0.7, TV: 0.7, AV: 0.7}
+  length_bins:
+    short: [1, 4, 0.45]
+    medium: [5, 10, 0.35]
+    long: [11, 20, 0.20]
+  max_spans_per_modality: 2
+loss: {cls: 1.0, reg: 1.0, text_bridge: 0.20, reconstruction: 0.30, consistency: 0.20, cls_reg_agreement: 0.10}
+selection: {macro_f1: 0.35, accuracy: 0.25, pearson_norm: 0.25, mae_norm: 0.15}
