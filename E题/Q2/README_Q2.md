@@ -1,6 +1,6 @@
 # 问题二：SRF-MSA
 
-SRF-MSA（Span-aware Reconstruction and Reliability Fusion for Multimodal Sentiment Analysis，连续缺失区间感知的重建与可靠性融合情感模型）使用赛题附件 2 的 `aligned_50.pkl` 训练和验证，并对附件 3 的 30 个对齐样本推理。训练参数只来自 `train`，结构与训练轮次只根据 `valid` 选择；`test` 在最终模型冻结后评估一次。附件 3 无标签，只输出预测。
+SRF-MSA（Span-aware Reconstruction and Reliability Fusion for Multimodal Sentiment Analysis，连续缺失区间感知的重建与可靠性融合情感模型）使用赛题附件 2 的 `aligned_50.pkl` 训练和验证，并对附件 3 的 30 个对齐样本推理。训练参数只来自 `train`，结构与训练轮次只根据 `valid` 选择；正式流程在模型冻结后评估 `test`。项目历史中的预备流程曾访问过 `test`，详情见 `Q2_RESULT_REPORT.md`。附件 3 无标签，只输出预测。
 
 ## 数据路径与环境
 
@@ -35,6 +35,8 @@ vision    -> Vision Adapter      -> Span Geometry -> Temporal Reconstruction --+
 ```
 
 `outputs/q2/` 含 `best_joint.pt`、`best_cls.pt`、`best_reg.pt`、训练曲线 CSV、验证及测试指标 JSON、四张缺失规律表、`ablation_table.csv`、附件 3 全量预测 CSV、论文图和结果摘要。`attachment3_predictions.csv` 包含三分类概率与 `[-3,3]` 情感强度，`sample_id` 使用原文件名 stem。
+
+本次正式实验的数值、规律分析、消融边界和测试集使用说明见 `Q2_RESULT_REPORT.md`。
 
 附件 3 的模态缺失掩码由有效区间内全零候选推断，属于 **zero-derived missing candidates（零值推断缺失候选）**，不是赛题提供的真实缺失掩码。
 

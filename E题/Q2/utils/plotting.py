@@ -33,16 +33,31 @@ def regression_plot(rows, path):
 
 def condition_plot(df, x, path, title):
     fig, axes = plt.subplots(1, 2, figsize=(10, 4))
-    for modality, part in df.groupby('modality'):
-        part = part.sort_values(x)
-        axes[0].plot(part[x].astype(str), part['f1_macro'], marker='o', label=modality)
-        axes[1].plot(part[x].astype(str), part['mae'], marker='o', label=modality)
+    if x == 'modality':
+        order = ['T', 'A', 'V', 'TA', 'TV', 'AV']
+        part = df.set_index('modality').loc[order]
+        axes[0].bar_label(axes[0].bar(order, part['f1_macro']), fmt='%.3f', fontsize=7)
+        axes[1].bar_label(axes[1].bar(order, part['mae']), fmt='%.3f', fontsize=7)
+        axes[0].set_ylim(0, part['f1_macro'].max() * 1.18)
+        axes[1].set_ylim(0, part['mae'].max() * 1.18)
+    else:
+        for modality, part in df.groupby('modality'):
+            if x == 'position':
+                part = part.set_index(x).loc[['early', 'middle', 'late']].reset_index()
+            else:
+                part = part.sort_values(x)
+            axes[0].plot(part[x].astype(str), part['f1_macro'], marker='o', label=modality)
+            axes[1].plot(part[x].astype(str), part['mae'], marker='o', label=modality)
     axes[0].set_ylabel('Macro F1')
     axes[1].set_ylabel('MAE')
     for ax in axes:
-        ax.set_xlabel(x)
+        ax.set_xlabel({'Missing type': 'Missing modality combination',
+                       'Missing position': 'Span position',
+                       'Missing rate': 'Missing rate',
+                       'Missing duration': 'Span length (frames)'}.get(title, x))
         ax.grid(alpha=0.2)
-        ax.legend(fontsize=8)
+        if x != 'modality':
+            ax.legend(fontsize=8)
         ax.tick_params(axis='x', rotation=35)
     fig.suptitle(title)
     fig.tight_layout()
