@@ -1,0 +1,9 @@
+{
+  "status": "ok",
+  "return_code": 0,
+  "beam": 100,
+  "retry_beam": 400,
+  "g2p_model": "english_us_arpa",
+  "g2p_return_code": 0,
+  "textgrid_count": 99
+}
