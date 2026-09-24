@@ -1,0 +1,62 @@
+{
+  "video_count": 100,
+  "manifest_row_count": 100,
+  "unique_sample_id_count": 100,
+  "npz_sample_count": 100,
+  "shapes": {
+    "text": [
+      100,
+      50,
+      128
+    ],
+    "audio": [
+      100,
+      50,
+      74
+    ],
+    "vision": [
+      100,
+      50,
+      52
+    ],
+    "time_edges": [
+      100,
+      51
+    ]
+  },
+  "nonfinite_feature_values": {
+    "text": 0,
+    "audio": 0,
+    "vision": 0
+  },
+  "alignment_word_rows": 1934,
+  "alignment_order_errors": 0,
+  "alignment_bounds_errors": 0,
+  "incomplete_video_decode_samples": [],
+  "incomplete_audio_decode_samples": [],
+  "low_vision_coverage_samples": [
+    "-HwX2H8Z4hY/9",
+    "-NFrJFQijFE/1",
+    "-NFrJFQijFE/2",
+    "-UuX1xuaiiE/1",
+    "-iRBcNs9oI8/3",
+    "-iRBcNs9oI8/7",
+    "-iRBcNs9oI8/6",
+    "-iRBcNs9oI8/9",
+    "-iRBcNs9oI8/8",
+    "-mJ2ud6oKI8/1",
+    "-mJ2ud6oKI8/2",
+    "-wny0OAz3g8/3",
+    "-wny0OAz3g8/5",
+    "-wny0OAz3g8/7",
+    "-hnBHBN8p5A/7",
+    "-hnBHBN8p5A/6",
+    "-ri04Z7vwnc/0"
+  ],
+  "near_silence_samples": [
+    "-mJ2ud6oKI8/1",
+    "-mJ2ud6oKI8/2"
+  ],
+  "padding_used_on_time_axis": false,
+  "status": "PASS"
+}

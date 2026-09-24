@@ -1,0 +1,5 @@
+numpy>=1.26
+torch>=2.2
+transformers>=4.45
+scikit-learn>=1.4
+PyYAML>=6.0

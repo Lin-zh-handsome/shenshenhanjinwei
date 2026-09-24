@@ -1,0 +1,61 @@
+{
+  "model": "Deployable_BERT_Last4",
+  "selected_on": "validation_joint",
+  "selected_epoch": 25,
+  "checkpoint": "outputs/q2_score_push/deployable_bert/partial_last4/best_joint.pt",
+  "test_sample_count": 727,
+  "test": {
+    "accuracy": 0.6657496561210454,
+    "f1_macro": 0.6024542944685577,
+    "f1_weighted": 0.6531455190705394,
+    "mae": 0.6770829202170436,
+    "pearson": 0.6639449245463892
+  },
+  "class_metrics": [
+    {
+      "class_id": 0,
+      "class_name": "Negative",
+      "precision": 0.7142857142857143,
+      "recall": 0.6763285024154589,
+      "f1": 0.6947890818858561,
+      "support": 207
+    },
+    {
+      "class_id": 1,
+      "class_name": "Neutral",
+      "precision": 0.41739130434782606,
+      "recall": 0.3037974683544304,
+      "f1": 0.3516483516483517,
+      "support": 158
+    },
+    {
+      "class_id": 2,
+      "class_name": "Positive",
+      "precision": 0.7115384615384616,
+      "recall": 0.8176795580110497,
+      "f1": 0.7609254498714653,
+      "support": 362
+    }
+  ],
+  "confusion_matrix": [
+    {
+      "true_class": "Negative",
+      "pred_negative": 140,
+      "pred_neutral": 28,
+      "pred_positive": 39
+    },
+    {
+      "true_class": "Neutral",
+      "pred_negative": 29,
+      "pred_neutral": 48,
+      "pred_positive": 81
+    },
+    {
+      "true_class": "Positive",
+      "pred_negative": 27,
+      "pred_neutral": 39,
+      "pred_positive": 296
+    }
+  ],
+  "test_evaluated": true
+}

@@ -1,0 +1,276 @@
+time_axis:
+  K: 50
+  comparison_K:
+  - 25
+  - 50
+  - 100
+  definition: time_edges[i,k] = k * duration_used_sec[i] / K
+  duration_used: last decoded video PTS minus first decoded video PTS plus final decoded
+    frame duration; if unavailable, ffprobe video-stream then container duration,
+    warning recorded
+  video_pts: frame.pts * frame.time_base; never frame_index / fps
+text:
+  source: label-100.xlsx label.text; no ASR
+  normalization: Unicode NFKC; preserve raw text; record bracket annotations, punctuation
+    and whitespace changes
+  encoder: google-bert/bert-base-uncased
+  revision: 86b5e0934494bd15c9632b12f734a8a67f723594
+  tokenizer: BertTokenizerFast from the pinned model revision
+  hidden_size: 768
+  word_pooling: mean of subword last-layer contextual states
+  window_weight: overlap_duration / word_duration; normalize within each nonempty
+    window
+  missing_word_policy: MFA forced alignment; internal gaps linear interpolation; edge/no-anchor
+    fallback proportional to word order
+  pca:
+    components: 128
+    fit_positions: valid K=50 Q1 text windows only
+    random_seed: 20260923
+    solver: randomized
+    labels_used: false
+audio:
+  source: first audio stream; FFmpeg PCM S16LE mono 16000 Hz
+  sample_rate: 16000
+  frame_length_samples: 400
+  frame_length_ms: 25
+  frame_hop_samples: 160
+  frame_hop_ms: 10
+  fft_size: 512
+  window: Hann
+  features_37:
+  - mfcc_00
+  - mfcc_01
+  - mfcc_02
+  - mfcc_03
+  - mfcc_04
+  - mfcc_05
+  - mfcc_06
+  - mfcc_07
+  - mfcc_08
+  - mfcc_09
+  - mfcc_10
+  - mfcc_11
+  - mfcc_12
+  - delta_mfcc_00
+  - delta_mfcc_01
+  - delta_mfcc_02
+  - delta_mfcc_03
+  - delta_mfcc_04
+  - delta_mfcc_05
+  - delta_mfcc_06
+  - delta_mfcc_07
+  - delta_mfcc_08
+  - delta_mfcc_09
+  - delta_mfcc_10
+  - delta_mfcc_11
+  - delta_mfcc_12
+  - log_energy
+  - f0_hz
+  - voicing_probability
+  - zero_crossing_rate
+  - spectral_centroid_hz
+  - spectral_bandwidth_hz
+  - spectral_rolloff_hz
+  - spectral_flatness
+  - spectral_flux
+  - harmonic_to_noise_ratio_db
+  - rms_energy
+  mfcc:
+    n_mfcc: 13
+    mel_bands: 40
+    mel_norm: slaney
+    dct_type: 2
+  delta_mfcc: central first difference at 10-ms frame spacing; one-sided at boundaries
+  f0:
+    method: librosa.pyin
+    frame_length_samples: 403
+    fmin_hz: 80.0
+    fmax_hz: 400
+    voiced_probability_threshold: 0.5
+    statistics: mean/std only over voiced frames; 0 if none
+    alignment: 403-sample (25.19-ms) pitch support is interpolated onto the common
+      400-sample (25-ms) descriptor frame centers
+  voicing_probability: pYIN voiced probability in [0,1]
+  log_energy: natural log of frame sum of squares plus 1e-12
+  spectral_flux: sum of squared positive differences between consecutive L2-normalized
+    magnitude spectra
+  hnr: 10*log10(r/(1-r)), r is maximum normalized autocorrelation in 70-400 Hz lag
+    range
+  window_statistics: mean and standard deviation of 37 frame descriptors
+  audio_reliable_rms_threshold: 0.001
+  audio_present_vs_reliable: present means one or more analysis frames; reliable means
+    mean RMS >= configured threshold
+vision:
+  feature_tool: MediaPipe Face Landmarker
+  feature_dimension: 52
+  feature_names:
+  - _neutral
+  - browDownLeft
+  - browDownRight
+  - browInnerUp
+  - browOuterUpLeft
+  - browOuterUpRight
+  - cheekPuff
+  - cheekSquintLeft
+  - cheekSquintRight
+  - eyeBlinkLeft
+  - eyeBlinkRight
+  - eyeLookDownLeft
+  - eyeLookDownRight
+  - eyeLookInLeft
+  - eyeLookInRight
+  - eyeLookOutLeft
+  - eyeLookOutRight
+  - eyeLookUpLeft
+  - eyeLookUpRight
+  - eyeSquintLeft
+  - eyeSquintRight
+  - eyeWideLeft
+  - eyeWideRight
+  - jawForward
+  - jawLeft
+  - jawOpen
+  - jawRight
+  - mouthClose
+  - mouthDimpleLeft
+  - mouthDimpleRight
+  - mouthFrownLeft
+  - mouthFrownRight
+  - mouthFunnel
+  - mouthLeft
+  - mouthLowerDownLeft
+  - mouthLowerDownRight
+  - mouthPressLeft
+  - mouthPressRight
+  - mouthPucker
+  - mouthRight
+  - mouthRollLower
+  - mouthRollUpper
+  - mouthShrugLower
+  - mouthShrugUpper
+  - mouthSmileLeft
+  - mouthSmileRight
+  - mouthStretchLeft
+  - mouthStretchRight
+  - mouthUpperUpLeft
+  - mouthUpperUpRight
+  - noseSneerLeft
+  - noseSneerRight
+  semantics: model blendshape scores; not AU ground truth and not emotion labels
+  detection_confidence_source: OpenCV YuNet FaceDetectorYN score, column 14; for frames
+    with a MediaPipe blendshape face
+  confidence_model_revision: 3cc26e7f1014a5ee5d74a42acee58bafc9d0a310
+  yunet_input: aspect-preserving letterbox to 320x320
+  confidence_threshold: 0.5
+  face_coverage_threshold: 0.2
+  frame_sampling: every successfully decoded video frame with a real PTS
+  window_aggregation: median over detected frames; mean and nearest-center frame also
+    computed for comparison
+  window_mask: face_coverage >= 0.20 and mean YuNet score >= 0.50
+storage:
+  features: float16 raw aggregated values
+  time_edges_and_masks: float32 edges; uint8 masks and counts
+  normalization_stats: float32 mean/std/valid_count over valid K=50 positions
+  text_pca_parameters: float32 mean and projection matrix
+alignment:
+  tool: Montreal Forced Aligner
+  beam: 100
+  retry_beam: 400
+  g2p_model: english_us_arpa
+  reuse_policy: alignment cache accepted only when sample_id and input/model/config
+    SHA256 key match; full run regenerates MFA alignment
+  confidence: TextGrid does not provide word confidence; recorded as null
+models:
+  files:
+  - file: model.safetensors
+    source: https://huggingface.co/google-bert/bert-base-uncased
+    revision: 86b5e0934494bd15c9632b12f734a8a67f723594
+    sha256: 68d45e234eb4a928074dfd868cead0219ab85354cc53d20e772753c6bb9169d3
+  - file: tokenizer.json
+    source: https://huggingface.co/google-bert/bert-base-uncased
+    revision: 86b5e0934494bd15c9632b12f734a8a67f723594
+    sha256: ce64fce797c24f68df90b40a3f74f579b336a493db14bd583fd520ea0d8c9a98
+  - file: vocab.txt
+    source: https://huggingface.co/google-bert/bert-base-uncased
+    revision: 86b5e0934494bd15c9632b12f734a8a67f723594
+    sha256: 07eced375cec144d27c900241f3e339478dec958f92fddbc551f295c992038a3
+  - file: face_landmarker.task
+    source: https://ai.google.dev/edge/mediapipe/solutions/vision/face_landmarker
+    revision: face_landmarker.task model asset
+    sha256: 64184e229b263107bc2b804c6625db1341ff2bb731874b0bcc2fe6544e0bc9ff
+  - file: face_detection_yunet_2023mar.onnx
+    source: https://huggingface.co/opencv/face_detection_yunet
+    revision: 3cc26e7f1014a5ee5d74a42acee58bafc9d0a310
+    sha256: 8f2383e4dd3cfbb4553ea8718107fc0423210dc964f9f4280604804ed2552fa4
+  - file: english_us_arpa_acoustic.zip
+    source: Montreal Forced Aligner english_us_arpa acoustic model
+    revision: local pinned model asset
+    sha256: d35ce271ded357d833d2f4b8d1041dc3748b9538567ba13f2c697f4e4126711b
+  - file: english_us_arpa_dictionary.dict
+    source: Montreal Forced Aligner english_us_arpa dictionary
+    revision: local pinned dictionary asset
+    sha256: e8c6c7b036ae2b7c78d2768b8dc6b1f9359175b842956d00b48c53c9c332e6b0
+  - file: english_us_arpa.zip
+    source: Montreal Forced Aligner pretrained G2P model
+    revision: local pinned model asset
+    sha256: 0ef6a3b288dc0a91a267f98bf556a45bbfeae198e578398e92ac603a61ad46e5
+  text_encoder:
+    name: BERT base uncased
+    source: google-bert/bert-base-uncased
+    revision: 86b5e0934494bd15c9632b12f734a8a67f723594
+    tokenizer: BertTokenizerFast, pinned with the same model revision
+    fine_tuned: false
+    important_parameters:
+      hidden_size: 768
+      contextual_layer: last hidden state
+      subword_pooling: mean within each official transcript word
+  visual_feature_model:
+    name: MediaPipe Face Landmarker
+    source: https://ai.google.dev/edge/mediapipe/solutions/vision/face_landmarker
+    revision: local model asset; SHA256 recorded in files list
+    fine_tuned: false
+    important_parameters:
+      running_mode: IMAGE
+      num_faces: 1
+      blendshapes: true
+  visual_confidence_model:
+    name: OpenCV Zoo YuNet face detection
+    source: https://huggingface.co/opencv/face_detection_yunet
+    revision: 3cc26e7f1014a5ee5d74a42acee58bafc9d0a310
+    fine_tuned: false
+    important_parameters:
+      input: aspect-preserving 320x320 letterbox
+      confidence_column: 14
+  forced_alignment:
+    name: Montreal Forced Aligner English US ARPA
+    source: local MFA acoustic and dictionary model assets
+    revision: acoustic, dictionary and G2P model SHA256 values recorded in files list
+    fine_tuned: false
+    important_parameters:
+      beam: 100
+      retry_beam: 400
+      g2p: english_us_arpa
+software:
+  numpy: 2.4.6
+  pandas: 3.0.6
+  scikit-learn: 1.9.1
+  torch: 2.12.1+cu130
+  transformers: 5.17.0
+  tokenizers: 0.23.2
+  librosa: 0.11.0
+  soundfile: 0.14.0
+  av: 18.1.0
+  mediapipe: 1.0.1
+  opencv-python: not-installed
+  montreal-forced-aligner: 3.4.2
+  kalpy: not-installed
+  matplotlib: 3.11.2
+  Pillow: 12.3.0
+  openpyxl: 3.1.5
+  PyYAML: 6.0.3
+  opencv_runtime: 5.0.0
+  pyav_runtime: 18.1.0
+  ffmpeg_first_line: ffmpeg version 7.1.1 Copyright (c) 2000-2025 the FFmpeg developers
+  ffprobe_first_line: ffprobe version 7.1.1 Copyright (c) 2007-2025 the FFmpeg developers
+  mfa_first_line: '                                                                                '
+  python: 3.11.16
