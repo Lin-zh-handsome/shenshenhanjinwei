@@ -1,0 +1,60 @@
+{
+  "run_name": "C2_StrongTemporal",
+  "selected_by": "0.55_macro_f1+0.45_accuracy",
+  "selected_epoch": 13,
+  "model_kind": "raw",
+  "valid": {
+    "accuracy": 0.6208791208791209,
+    "f1_macro": 0.6023759231092317,
+    "f1_weighted": 0.6214982080586857,
+    "mae": 0.6333783025498972,
+    "pearson": 0.6171089693881705
+  },
+  "class_metrics": [
+    {
+      "class_id": 0,
+      "class_name": "Negative",
+      "precision": 0.6467889908256881,
+      "recall": 0.6844660194174758,
+      "f1": 0.6650943396226415,
+      "support": 206
+    },
+    {
+      "class_id": 1,
+      "class_name": "Neutral",
+      "precision": 0.45454545454545453,
+      "recall": 0.46195652173913043,
+      "f1": 0.4582210242587601,
+      "support": 184
+    },
+    {
+      "class_id": 2,
+      "class_name": "Positive",
+      "precision": 0.6996904024767802,
+      "recall": 0.6686390532544378,
+      "f1": 0.6838124054462935,
+      "support": 338
+    }
+  ],
+  "best_epochs": {
+    "accuracy": {
+      "epoch": 6,
+      "model_kind": "raw"
+    },
+    "macro_f1": {
+      "epoch": 13,
+      "model_kind": "raw"
+    },
+    "joint": {
+      "epoch": 13,
+      "model_kind": "raw"
+    },
+    "regression": {
+      "epoch": 15,
+      "model_kind": "raw"
+    }
+  },
+  "trainable_params": 5376991,
+  "gpu_memory_mb": 360.93017578125,
+  "test_evaluated": false
+}

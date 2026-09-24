@@ -1,0 +1,47 @@
+{
+  "run_name": "Oracle_Seed_2026",
+  "selected_by": "valid_macro_f1",
+  "selected_epoch": 3,
+  "valid": {
+    "accuracy": 0.6291208791208791,
+    "f1_macro": 0.6032750570032431,
+    "f1_weighted": 0.6262105662359031,
+    "mae": 0.7999045086415628,
+    "pearson": 0.645657948991213
+  },
+  "class_metrics": [
+    {
+      "class_id": 0,
+      "class_name": "Negative",
+      "precision": 0.6491228070175439,
+      "recall": 0.7184466019417476,
+      "f1": 0.6820276497695853,
+      "support": 206
+    },
+    {
+      "class_id": 1,
+      "class_name": "Neutral",
+      "precision": 0.4491017964071856,
+      "recall": 0.4076086956521739,
+      "f1": 0.42735042735042733,
+      "support": 184
+    },
+    {
+      "class_id": 2,
+      "class_name": "Positive",
+      "precision": 0.7057057057057057,
+      "recall": 0.6952662721893491,
+      "f1": 0.7004470938897168,
+      "support": 338
+    }
+  ],
+  "best_epochs": {
+    "accuracy": 3,
+    "macro_f1": 3,
+    "mae": 6,
+    "joint": 4
+  },
+  "trainable_params": 694879,
+  "gpu_memory_mb": 47.5185546875,
+  "test_evaluated": false
+}

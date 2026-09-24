@@ -1,0 +1,4 @@
+true_class,pred_negative,pred_neutral,pred_positive
+Negative,147,44,15
+Neutral,38,113,33
+Positive,45,115,178
