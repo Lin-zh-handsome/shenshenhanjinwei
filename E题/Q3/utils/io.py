@@ -43,7 +43,11 @@ def load_checkpoint(path, cfg, device):
     from models.fer_msa import FERMSA
     saved = torch.load(path, map_location=device, weights_only=False)
     model = FERMSA(cfg, variant=saved.get("variant", "A5")).to(device)
-    model.load_state_dict(saved["model"])
+    state = saved["model"]
+    if any(key.startswith("router.fuse.") for key in state):
+        state = {("fusion." + key.removeprefix("router.")) if key.startswith("router.fuse.") else key: value
+                 for key, value in state.items()}
+    model.load_state_dict(state)
     epoch = saved.get("epoch", cfg["training"]["epochs"])
     start = cfg["model"]["gate_temperature_start"]
     end = cfg["model"]["gate_temperature_end"]

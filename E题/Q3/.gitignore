@@ -1,0 +1,9 @@
+__pycache__/
+*.pyc
+outputs/q3_v2/**/*.pt
+outputs/q3_v2/**/*.png
+outputs/q3_v2/**/*.jpg
+outputs/q3_v2/**/*.npz
+outputs/q3_v2/**/*.log
+outputs/q3_v2/*.npz
+outputs/q3_v2/*.log

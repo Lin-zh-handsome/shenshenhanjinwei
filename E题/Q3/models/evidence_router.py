@@ -15,13 +15,18 @@ class EvidenceRouter(nn.Module):
     def __init__(self, d_model=128, dropout=0.15):
         super().__init__()
         self.route = nn.Sequential(nn.Linear(3 * d_model, d_model), nn.GELU(), nn.Dropout(dropout), nn.Linear(d_model, 3))
+
+    def forward(self, reps):
+        return self.route(torch.cat(reps, dim=-1)).softmax(dim=-1)
+
+
+class SimpleMultimodalFusion(nn.Module):
+    def __init__(self, d_model=128, dropout=0.15):
+        super().__init__()
         self.fuse = nn.Sequential(nn.Linear(3 * d_model, 2 * d_model), nn.GELU(), nn.Dropout(dropout), nn.Linear(2 * d_model, d_model), nn.LayerNorm(d_model))
 
-    def forward(self, reps, route=True):
-        joined = torch.cat(reps, dim=-1)
-        if route:
-            alpha = self.route(joined).softmax(dim=-1)
-        else:
-            alpha = joined.new_full((joined.shape[0], 3), 1 / 3)
+    def forward(self, reps):
+        # A1 used uniform 1/3 scaling before its simple fusion MLP.
+        alpha = reps[0].new_full((reps[0].shape[0], 3), 1 / 3)
         fused = torch.cat([alpha[:, i:i+1] * r for i, r in enumerate(reps)], dim=-1)
-        return self.fuse(fused), alpha
+        return self.fuse(fused)

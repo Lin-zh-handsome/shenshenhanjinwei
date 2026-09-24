@@ -34,13 +34,17 @@ def local_evidence_scores(model, batch, means, cfg, full=None):
     changed["valid_mask"] = batch["valid_mask"].expand(len(candidates), -1)
     occ = model(**changed, temperature=model.inference_temperature)
     c = int(full["cls_prob"][0].argmax())
-    cls = (full["cls_prob"][0, c] - occ["cls_prob"][:, c]).abs()
-    reg = (full["reg_pred"][0] - occ["reg_pred"]).abs() / 6
+    cls_signed = full["cls_prob"][0, c] - occ["cls_prob"][:, c]
+    reg_signed = full["reg_pred"][0] - occ["reg_pred"]
+    cls = cls_signed.abs()
+    reg = reg_signed.abs() / 6
     impacts = cfg["explanation"]["modality_cls_weight"] * cls + cfg["explanation"]["modality_reg_weight"] * reg
     result = {}
     for modality in MODALITIES:
         scores = torch.zeros(50, device=impacts.device)
         occlusion = torch.zeros(50, device=impacts.device)
+        classification_signed = torch.zeros(50, device=impacts.device)
+        regression_signed = torch.zeros(50, device=impacts.device)
         rows = [(i, t) for i, (m, t) in enumerate(candidates) if m == modality]
         positions = torch.tensor([t for _, t in rows], device=impacts.device, dtype=torch.long)
         values = impacts[torch.tensor([i for i, _ in rows], device=impacts.device)]
@@ -48,5 +52,12 @@ def local_evidence_scores(model, batch, means, cfg, full=None):
         occ_norm = _normalize(values)
         scores[positions] = cfg["explanation"]["local_gate_weight"] * gate_norm + cfg["explanation"]["local_occlusion_weight"] * occ_norm
         occlusion[positions] = values
-        result[modality] = {"score": scores.cpu().numpy(), "gate": gate_vectors[modality].cpu().numpy(), "occlusion": occlusion.cpu().numpy(), "candidate_positions": positions.cpu().tolist()}
+        rows_idx = torch.tensor([i for i, _ in rows], device=impacts.device)
+        classification_signed[positions] = cls_signed[rows_idx]
+        regression_signed[positions] = reg_signed[rows_idx]
+        result[modality] = {"score": scores.cpu().numpy(), "gate": gate_vectors[modality].cpu().numpy(),
+                            "occlusion": occlusion.cpu().numpy(),
+                            "classification_signed_effect": classification_signed.cpu().numpy(),
+                            "regression_signed_effect": regression_signed.cpu().numpy(),
+                            "candidate_positions": positions.cpu().tolist()}
     return result

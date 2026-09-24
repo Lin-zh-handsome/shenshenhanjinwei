@@ -19,12 +19,12 @@ LABELS = ("Negative", "Neutral", "Positive")
 
 
 @torch.no_grad()
-def infer_attachment4(cfg, checkpoint):
-    output = Path(cfg["paths"]["output_dir"])
+def infer_attachment4(cfg, checkpoint, output_dir=None):
+    output = Path(output_dir or Path(cfg["paths"]["output_dir"]) / "attachment4")
     output.mkdir(parents=True, exist_ok=True)
     device = get_device(cfg)
     model, _ = load_checkpoint(checkpoint, cfg, device)
-    means = load_feature_means(output / "train_feature_baselines.npz")
+    means = load_feature_means(Path(cfg["paths"]["output_dir"]) / "train_feature_baselines.npz")
     dataset = Attachment4AlignedDataset(cfg["paths"]["attachment4_aligned_dir"], cfg["paths"]["attachment4_video_dir"])
     summary_rows, span_rows, mapping_rows = [], [], []
     for sample in tqdm(dataset, desc="attachment4 inference"):
@@ -43,7 +43,7 @@ def infer_attachment4(cfg, checkpoint):
         main_modality = MODALITIES[int(importance.argmax())]
         spans = {}
         for i, modality in enumerate(MODALITIES):
-            spans[modality] = evidence_spans(modality, local[modality], valid_len, cfg)
+            spans[modality] = evidence_spans(modality, local[modality], valid_len, cfg, float(full["reg_pred"][0]))
             if not spans[modality]:
                 raise ValueError(f"No evidence span for {sample_id}/{modality}")
             for span in spans[modality]:
@@ -53,13 +53,17 @@ def infer_attachment4(cfg, checkpoint):
                     keyframe, fallback = save_keyframe(sample["video_path"], span, metadata, output / "evidence_frames" / f"{sample_id}_vision_rank{span['rank']}.jpg")
                     if fallback:
                         mapping_warnings.append(f"keyframe_seek_fallback_rank{span['rank']}")
-                span["keyframe_path"] = keyframe
+                span["keyframe_path"] = str(Path(keyframe).relative_to(output)) if keyframe else ""
                 span_rows.append({
                     "sample_id": sample_id, "modality": modality, "modality_importance": float(importance[i]),
                     "rank": span["rank"], "grid_start": span["grid_start"],
                     "grid_end_exclusive": span["grid_end_exclusive"], "span_length": span["length"],
                     "mean_gate": span["mean_gate"], "mean_occlusion": span["mean_occlusion"],
                     "evidence_score": span["evidence_score"],
+                    "gate_score": span["gate_score"], "occlusion_magnitude": span["occlusion_magnitude"],
+                    "classification_signed_effect": span["classification_signed_effect"],
+                    "regression_signed_effect": span["regression_signed_effect"],
+                    "evidence_direction": span["evidence_direction"],
                     "start_sec_approx": span["start_sec_approx"], "end_sec_approx": span["end_sec_approx"],
                     "audio_start_sec_approx": span["start_sec_approx"] if modality == "audio" else "",
                     "audio_end_sec_approx": span["end_sec_approx"] if modality == "audio" else "",
@@ -67,14 +71,27 @@ def infer_attachment4(cfg, checkpoint):
                     "keyframe_path": keyframe, "mapping_method": TIME_METHOD,
                 })
         main = spans[main_modality][0]
+        top = max((span for group in spans.values() for span in group), key=lambda span: span["evidence_score"])
         prediction = {
             "sample_id": sample_id, "pred_class_id": class_id, "pred_label": LABELS[class_id],
+            "pred_class": class_id,
             "prob_negative": float(probabilities[0]), "prob_neutral": float(probabilities[1]),
             "prob_positive": float(probabilities[2]), "pred_intensity": float(full["reg_pred"][0]),
+            "pred_prob_negative": float(probabilities[0]), "pred_prob_neutral": float(probabilities[1]),
+            "pred_prob_positive": float(probabilities[2]),
             "main_modality": main_modality,
             **{f"importance_{m}": float(importance[i]) for i, m in enumerate(MODALITIES)},
             **{f"router_{m}": float(router[i]) for i, m in enumerate(MODALITIES)},
             "main_grid_start": main["grid_start"], "main_grid_end_exclusive": main["grid_end_exclusive"],
+            "top_evidence_modality": top["modality"],
+            "top_evidence_start_grid": top["grid_start"],
+            "top_evidence_end_grid": top["grid_end_exclusive"],
+            "approx_start_seconds": top["start_sec_approx"],
+            "approx_end_seconds": top["end_sec_approx"],
+            "gate_score": top["gate_score"], "occlusion_score": top["occlusion_magnitude"],
+            "classification_signed_effect": top["classification_signed_effect"],
+            "regression_signed_effect": top["regression_signed_effect"],
+            "evidence_direction": top["evidence_direction"],
             "main_start_sec_approx": main["start_sec_approx"], "main_end_sec_approx": main["end_sec_approx"],
             "main_text_fragment_approx": spans["text"][0]["text_fragment_approx"],
             "main_visual_keyframe": spans["vision"][0]["keyframe_path"],
@@ -93,7 +110,7 @@ def infer_attachment4(cfg, checkpoint):
                              "time_mapping_method": TIME_METHOD, "text_mapping_method": TEXT_METHOD,
                              "warning": ";".join(["official token and position timestamps unavailable", *mapping_warnings])})
         save_explanation_card(output / "explanation_cards" / f"{sample_id}.png", sample_id, prediction,
-                              importance, local, spans, spans["vision"][0]["keyframe_path"])
+                              importance, local, spans, output / spans["vision"][0]["keyframe_path"])
     pd.DataFrame(summary_rows).to_csv(output / "attachment4_predictions_explanations.csv", index=False)
     pd.DataFrame(span_rows).to_csv(output / "attachment4_explanations_long.csv", index=False)
     pd.DataFrame(mapping_rows).to_csv(output / "attachment4_mapping_notes.csv", index=False)
@@ -104,5 +121,6 @@ if __name__ == "__main__":
     p = argparse.ArgumentParser()
     p.add_argument("--config", default="configs/q3_aligned.yaml")
     p.add_argument("--checkpoint", required=True)
+    p.add_argument("--output-dir")
     args = p.parse_args()
-    infer_attachment4(load_config(args.config), args.checkpoint)
+    infer_attachment4(load_config(args.config), args.checkpoint, args.output_dir)

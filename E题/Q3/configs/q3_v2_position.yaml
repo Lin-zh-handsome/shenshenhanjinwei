@@ -1,0 +1,69 @@
+seed: 42
+device: auto
+paths:
+  aligned_pkl: SET_PATH_TO_ATTACHMENT2_ALIGNED_50_PKL
+  attachment4_aligned_dir: SET_PATH_TO_ATTACHMENT4_ALIGNED
+  attachment4_video_dir: SET_PATH_TO_ATTACHMENT4_VIDEOS
+  output_dir: outputs/q3_v2
+runtime:
+  num_workers: 0
+  amp: true
+model:
+  max_len: 50
+  d_model: 128
+  n_heads: 4
+  temporal_layers: 2
+  ff_dim: 256
+  dropout: 0.15
+  gate_hidden: 128
+  gate_temperature_start: 1.0
+  gate_temperature_end: 0.5
+  evidence_ratio: 0.25
+  residual_context: 0.1
+  use_position: true
+  pooling_mode: legacy
+  router_diagnostic: false
+  gate_pool_beta: 0.5
+training:
+  batch_size: 32
+  epochs: 60
+  lr: 0.0002
+  weight_decay: 0.0001
+  grad_clip: 1.0
+  warmup_ratio: 0.05
+  early_stop_patience: 10
+loss:
+  cls: 1.0
+  reg: 1.0
+  full_aux: 0.0
+  cls_reg_agreement: 0.0
+  evidence_budget: 0.0
+  evidence_binary: 0.0
+  evidence_tv: 0.0
+  sufficiency: 0.0
+  comprehensiveness: 0.0
+  comp_cls_margin: 0.08
+  comp_reg_margin: 0.05
+explanation:
+  evidence_ratio: 0.25
+  max_spans_per_modality: 2
+  min_span_len: 1
+  occlusion_window: 3
+  local_candidate_topk: 12
+  modality_cls_weight: 0.6
+  modality_reg_weight: 0.4
+  local_gate_weight: 0.4
+  local_occlusion_weight: 0.6
+  deletion_steps:
+  - 0.0
+  - 0.1
+  - 0.2
+  - 0.3
+  - 0.4
+  - 0.5
+  random_control_repeats: 10
+selection:
+  macro_f1: 0.35
+  accuracy: 0.25
+  pearson_norm: 0.25
+  mae_norm: 0.15

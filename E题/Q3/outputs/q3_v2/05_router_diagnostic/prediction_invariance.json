@@ -1,0 +1,4 @@
+{
+  "max_validation_logit_difference": 0.0,
+  "max_validation_regression_difference": 0.0
+}

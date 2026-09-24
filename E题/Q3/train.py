@@ -63,7 +63,8 @@ def train_model(cfg, variant="A5", output_dir=None, seed=None):
     scheduler = torch.optim.lr_scheduler.LambdaLR(optimizer, lr_factor)
     amp = bool(cfg["runtime"]["amp"] and device.type == "cuda")
     scaler = torch.amp.GradScaler("cuda", enabled=amp)
-    best = {"cls": -float("inf"), "reg": float("inf"), "joint": -float("inf")}
+    best = {"cls": -float("inf"), "reg": float("inf"), "joint": -float("inf"),
+            "accuracy": -float("inf"), "pearson": -float("inf")}
     history = []
     wait = 0
     for epoch in range(cfg["training"]["epochs"]):
@@ -93,9 +94,17 @@ def train_model(cfg, variant="A5", output_dir=None, seed=None):
         if metrics["f1_macro"] > best["cls"]:
             best["cls"] = metrics["f1_macro"]
             save_checkpoint(output / "best_cls.pt", model, cfg, variant, epoch + 1, metrics, temperature)
+            save_checkpoint(output / "best_macro_f1.pt", model, cfg, variant, epoch + 1, metrics, temperature)
         if metrics["mae"] < best["reg"]:
             best["reg"] = metrics["mae"]
             save_checkpoint(output / "best_reg.pt", model, cfg, variant, epoch + 1, metrics, temperature)
+            save_checkpoint(output / "best_mae.pt", model, cfg, variant, epoch + 1, metrics, temperature)
+        if metrics["accuracy"] > best["accuracy"]:
+            best["accuracy"] = metrics["accuracy"]
+            save_checkpoint(output / "best_accuracy.pt", model, cfg, variant, epoch + 1, metrics, temperature)
+        if metrics["pearson"] > best["pearson"]:
+            best["pearson"] = metrics["pearson"]
+            save_checkpoint(output / "best_pearson.pt", model, cfg, variant, epoch + 1, metrics, temperature)
         if score > best["joint"]:
             best["joint"] = score
             wait = 0
