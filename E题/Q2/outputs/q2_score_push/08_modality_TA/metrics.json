@@ -1,0 +1,56 @@
+{
+  "run_name": "Oracle_Regularized_TA",
+  "selected_by": "valid_macro_f1",
+  "selected_epoch": 7,
+  "valid": {
+    "accuracy": 0.6181318681318682,
+    "f1_macro": 0.6142736388204062,
+    "f1_weighted": 0.6241072776323933,
+    "mae": 0.5922334992977955,
+    "pearson": 0.6482752710784885
+  },
+  "class_metrics": [
+    {
+      "class_id": 0,
+      "class_name": "Negative",
+      "precision": 0.6460176991150443,
+      "recall": 0.7087378640776699,
+      "f1": 0.6759259259259259,
+      "support": 206
+    },
+    {
+      "class_id": 1,
+      "class_name": "Neutral",
+      "precision": 0.44621513944223107,
+      "recall": 0.6086956521739131,
+      "f1": 0.5149425287356322,
+      "support": 184
+    },
+    {
+      "class_id": 2,
+      "class_name": "Positive",
+      "precision": 0.7649402390438247,
+      "recall": 0.5680473372781065,
+      "f1": 0.6519524617996605,
+      "support": 338
+    }
+  ],
+  "best_epochs": {
+    "accuracy": 7,
+    "macro_f1": 7,
+    "mae": 6,
+    "joint": 7
+  },
+  "best_model_kind": {
+    "accuracy": "raw",
+    "macro_f1": "raw",
+    "mae": "raw",
+    "joint": "raw"
+  },
+  "selected_model_kind": "raw",
+  "trainable_params": 694879,
+  "gpu_memory_mb": 60.61865234375,
+  "training_seconds": 15.927751742943656,
+  "train_accuracy_at_selection": 0.7160530191458027,
+  "test_evaluated": false
+}

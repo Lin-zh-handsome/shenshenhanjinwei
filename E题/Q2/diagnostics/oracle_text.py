@@ -4,6 +4,9 @@ import argparse
 import csv
 import math
 import pickle
+import copy
+import json
+import time
 from pathlib import Path
 
 import numpy as np
@@ -15,58 +18,13 @@ from torch.nn import functional as F
 from torch.utils.data import DataLoader
 
 from data.aligned_dataset import AlignedMoseiDataset
+from models.clean_backbone import CleanMultimodalBackbone
 from utils.metrics import metrics
 from utils.seed import set_seed
 
 
-class OracleTextBaseline(nn.Module):
-    def __init__(self, cfg):
-        super().__init__()
-        dim = cfg['d_model']
-        drop = cfg['dropout']
-        self.use_position = cfg['use_position']
-        self.text = nn.Sequential(nn.LayerNorm(768), nn.Linear(768, dim))
-        self.audio = nn.Sequential(nn.LayerNorm(74), nn.Linear(74, dim))
-        self.vision = nn.Sequential(nn.LayerNorm(35), nn.Linear(35, dim))
-        self.modality_embedding = nn.Parameter(torch.zeros(3, dim))
-        nn.init.normal_(self.modality_embedding, std=0.02)
-        self.position = nn.Embedding(50, dim) if self.use_position else None
-
-        def temporal_encoder():
-            layer = nn.TransformerEncoderLayer(dim, cfg['heads'], 2 * dim, drop,
-                                               batch_first=True, activation='gelu')
-            return nn.TransformerEncoder(layer, cfg['temporal_layers'],
-                                         enable_nested_tensor=False)
-
-        self.temporal = nn.ModuleList([temporal_encoder() for _ in range(3)])
-        self.fusion = nn.Sequential(nn.Linear(3 * dim, dim), nn.GELU(), nn.LayerNorm(dim))
-        self.fused_encoder = temporal_encoder()
-        self.pool = nn.Linear(dim, 1)
-        self.cls_head = nn.Linear(dim, 3)
-        self.reg_head = nn.Linear(dim, 1)
-
-    def forward(self, batch):
-        valid = batch['text_bert'][:, 1, :] > 0
-        if not bool(valid.any(1).all()):
-            raise ValueError('An Oracle Text sample has no valid token positions')
-        x = [self.text(batch['text_teacher']), self.audio(batch['audio']),
-             self.vision(batch['vision'])]
-        pos = None
-        if self.position is not None:
-            pos = self.position(torch.arange(valid.shape[1], device=valid.device))[None]
-        encoded = []
-        for index, (features, encoder) in enumerate(zip(x, self.temporal)):
-            features = features + self.modality_embedding[index]
-            if pos is not None:
-                features = features + pos
-            encoded.append(encoder(features, src_key_padding_mask=~valid))
-        fused = self.fusion(torch.cat(encoded, dim=-1))
-        if pos is not None:
-            fused = fused + pos
-        fused = self.fused_encoder(fused, src_key_padding_mask=~valid)
-        attention = self.pool(fused).squeeze(-1).masked_fill(~valid, -1e4).softmax(1)
-        pooled = (attention[..., None] * fused).sum(1)
-        return self.cls_head(pooled), 3 * torch.tanh(self.reg_head(pooled).squeeze(-1))
+class OracleTextBaseline(CleanMultimodalBackbone):
+    """Compatibility name; the default config retains the 5790875 state dict."""
 
 
 def to_device(raw, device):
@@ -116,6 +74,30 @@ def write_csv(path, rows):
         writer.writerows(rows)
 
 
+def build_class_weights(labels, mode, device):
+    labels = torch.as_tensor(labels, dtype=torch.long)
+    counts = torch.bincount(labels, minlength=3).float()
+    if mode == 'none':
+        return None
+    if mode == 'inverse':
+        weights = counts.sum() / (len(counts) * counts)
+    elif mode == 'sqrt':
+        weights = torch.sqrt(counts.mean() / counts)
+    else:
+        raise ValueError(f'Unknown class_weight_mode: {mode}')
+    return (weights / weights.mean()).to(device)
+
+
+@torch.no_grad()
+def update_ema(ema_model, model, decay):
+    source = dict(model.named_parameters())
+    for name, ema_param in ema_model.named_parameters():
+        if source[name].requires_grad:
+            ema_param.lerp_(source[name], 1.0 - decay)
+    for ema_buffer, source_buffer in zip(ema_model.buffers(), model.buffers()):
+        ema_buffer.copy_(source_buffer)
+
+
 def train(cfg):
     set_seed(cfg['seed'])
     output = Path(cfg['output_dir'])
@@ -128,14 +110,17 @@ def train(cfg):
     valid_data = AlignedMoseiDataset(split='valid', source=source)
     del source
     device = torch.device('cuda' if torch.cuda.is_available() else 'cpu')
-    loader = DataLoader(train_data, batch_size=cfg['batch_size'], shuffle=True, num_workers=0,
-                        pin_memory=device.type == 'cuda')
+    workers = cfg.get('num_workers', 0)
+    loader = DataLoader(train_data, batch_size=cfg['batch_size'], shuffle=True,
+                        num_workers=workers, pin_memory=device.type == 'cuda',
+                        persistent_workers=workers > 0)
     valid_loader = DataLoader(valid_data, batch_size=cfg['batch_size'], shuffle=False,
-                              num_workers=0, pin_memory=device.type == 'cuda')
+                              num_workers=workers, pin_memory=device.type == 'cuda',
+                              persistent_workers=workers > 0)
     preflight(next(iter(loader)))
     model = OracleTextBaseline(cfg).to(device)
-    counts = torch.bincount(torch.from_numpy(train_data.y_cls), minlength=3).float()
-    class_weights = (len(train_data) / (3 * counts)).to(device)
+    class_weights = build_class_weights(train_data.y_cls,
+                                        cfg.get('class_weight_mode', 'inverse'), device)
     optimizer = torch.optim.AdamW(model.parameters(), lr=cfg['lr'],
                                   weight_decay=cfg['weight_decay'])
     total_steps = cfg['epochs'] * len(loader)
@@ -149,19 +134,29 @@ def train(cfg):
     scheduler = torch.optim.lr_scheduler.LambdaLR(optimizer, lr_scale)
     amp = bool(cfg['amp'] and device.type == 'cuda')
     scaler = torch.amp.GradScaler('cuda', enabled=amp)
-    best = {'macro_f1': -float('inf'), 'mae': float('inf'), 'joint': -float('inf')}
+    ema_cfg = cfg.get('ema', {})
+    ema_model = copy.deepcopy(model).eval().requires_grad_(False) if ema_cfg.get('enabled', False) else None
+    best = {'accuracy': -float('inf'), 'macro_f1': -float('inf'),
+            'mae': float('inf'), 'joint': -float('inf')}
     best_epoch = {}
+    best_kind = {}
     history = []
     patience = 0
+    if device.type == 'cuda':
+        torch.cuda.reset_peak_memory_stats(device)
     for epoch in range(cfg['epochs']):
+        epoch_start = time.perf_counter()
         model.train()
         losses = []
+        correct = 0
+        seen = 0
         for raw in loader:
             batch = to_device(raw, device)
             optimizer.zero_grad(set_to_none=True)
             with torch.amp.autocast('cuda', enabled=amp):
                 logits, pred_reg = model(batch)
-                loss = F.cross_entropy(logits, batch['y_cls'], weight=class_weights)
+                loss = F.cross_entropy(logits, batch['y_cls'], weight=class_weights,
+                                       label_smoothing=cfg.get('label_smoothing', 0.0))
                 loss = loss + cfg['lambda_reg'] * F.smooth_l1_loss(pred_reg, batch['y_reg'], beta=0.5)
             if not torch.isfinite(loss):
                 raise ValueError(f'Nonfinite training loss at epoch {epoch + 1}')
@@ -173,26 +168,55 @@ def train(cfg):
             scaler.update()
             if scaler.get_scale() >= scale_before:
                 scheduler.step()
+                if ema_model is not None:
+                    update_ema(ema_model, model, ema_cfg.get('decay', 0.999))
             losses.append(float(loss.detach()))
+            correct += int((logits.detach().argmax(-1) == batch['y_cls']).sum())
+            seen += int(batch['y_cls'].numel())
         score, _ = evaluate_valid(model, valid_loader, device)
-        joint = score['f1_macro'] + 0.25 * score['pearson'] - 0.10 * score['mae'] / 3
-        row = {'epoch': epoch + 1, 'train_loss': float(np.mean(losses)), **score, 'joint': joint}
+        candidates_by_kind = {'raw': score}
+        if ema_model is not None:
+            cpu_rng = torch.get_rng_state()
+            cuda_rng = torch.cuda.get_rng_state_all() if device.type == 'cuda' else None
+            try:
+                candidates_by_kind['ema'] = evaluate_valid(ema_model, valid_loader, device)[0]
+            finally:
+                torch.set_rng_state(cpu_rng)
+                if cuda_rng is not None:
+                    torch.cuda.set_rng_state_all(cuda_rng)
+        row = {'epoch': epoch + 1, 'train_loss': float(np.mean(losses)),
+               'train_accuracy': correct / seen, **score,
+               'joint': score['f1_macro'] + 0.25 * score['pearson'] - 0.10 * score['mae'] / 3,
+               'epoch_seconds': time.perf_counter() - epoch_start}
+        if ema_model is not None:
+            for metric_name, value in score.items():
+                row[f'raw_{metric_name}'] = value
+            for metric_name, value in candidates_by_kind['ema'].items():
+                row[f'ema_{metric_name}'] = value
         history.append(row)
         write_csv(output / 'train_history.csv', history)
         print(f"{cfg['run_name']} epoch {epoch + 1}: loss={row['train_loss']:.4f} "
               f"valid_acc={score['accuracy']:.4f} valid_macro_f1={score['f1_macro']:.4f} "
               f"valid_mae={score['mae']:.4f}", flush=True)
-        candidates = {'macro_f1': score['f1_macro'], 'mae': score['mae'], 'joint': joint}
         improved_f1 = False
-        for name, value in candidates.items():
-            improved = value < best[name] if name == 'mae' else value > best[name]
-            if improved:
-                best[name] = value
-                best_epoch[name] = epoch + 1
-                torch.save({'state_dict': model.state_dict(), 'config': cfg, 'epoch': epoch + 1},
-                           output / f'best_{name}.pt')
-                if name == 'macro_f1':
-                    improved_f1 = True
+        for kind, candidate_score in candidates_by_kind.items():
+            joint = (candidate_score['f1_macro'] + 0.25 * candidate_score['pearson']
+                     - 0.10 * candidate_score['mae'] / 3)
+            candidates = {'accuracy': candidate_score['accuracy'],
+                          'macro_f1': candidate_score['f1_macro'],
+                          'mae': candidate_score['mae'], 'joint': joint}
+            candidate_model = model if kind == 'raw' else ema_model
+            for name, value in candidates.items():
+                improved = value < best[name] if name == 'mae' else value > best[name]
+                if improved:
+                    best[name] = value
+                    best_epoch[name] = epoch + 1
+                    best_kind[name] = kind
+                    torch.save({'state_dict': candidate_model.state_dict(), 'config': cfg,
+                                'epoch': epoch + 1, 'model_kind': kind},
+                               output / f'best_{name}.pt')
+                    if name == 'macro_f1':
+                        improved_f1 = True
         patience = 0 if improved_f1 else patience + 1
         if patience >= cfg['patience']:
             break
@@ -214,10 +238,15 @@ def train(cfg):
               [{'true_class': name, **dict(zip(('pred_negative', 'pred_neutral', 'pred_positive'),
                                                [int(n) for n in matrix[i]]))}
                for i, name in enumerate(('Negative', 'Neutral', 'Positive'))])
-    import json
     result = {'run_name': cfg['run_name'], 'selected_by': 'valid_macro_f1',
               'selected_epoch': best_epoch['macro_f1'], 'valid': score,
               'class_metrics': class_rows, 'best_epochs': best_epoch,
+              'best_model_kind': best_kind, 'selected_model_kind': best_kind['macro_f1'],
+              'trainable_params': sum(p.numel() for p in model.parameters() if p.requires_grad),
+              'gpu_memory_mb': (torch.cuda.max_memory_allocated(device) / (1024 ** 2)
+                                if device.type == 'cuda' else 0.0),
+              'training_seconds': sum(row['epoch_seconds'] for row in history),
+              'train_accuracy_at_selection': history[best_epoch['macro_f1'] - 1]['train_accuracy'],
               'test_evaluated': False}
     (output / 'metrics.json').write_text(json.dumps(result, indent=2), encoding='utf-8')
     print('selected valid metrics:', result, flush=True)

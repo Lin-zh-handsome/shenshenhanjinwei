@@ -1,0 +1,27 @@
+run_name: Oracle_Regularized_TAV
+aligned_pkl: /home/hanjinwei/math/data/E题数据/附件2-数据集特征文件/aligned_50.pkl
+output_dir: outputs/q2_score_push/08_modality_TAV
+seed: 42
+enabled_modalities:
+- text
+- audio
+- vision
+use_position: false
+fusion_mode: concat
+pool_mode: attention
+head_mode: linear
+class_weight_mode: inverse
+label_smoothing: 0.0
+d_model: 128
+heads: 4
+temporal_layers: 1
+dropout: 0.2
+batch_size: 32
+epochs: 40
+patience: 8
+lr: 0.0002
+weight_decay: 0.01
+warmup_ratio: 0.05
+lambda_reg: 1.0
+grad_clip: 1.0
+amp: true

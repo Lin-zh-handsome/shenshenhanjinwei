@@ -1,0 +1,56 @@
+{
+  "run_name": "Oracle_Inverse_LabelSmoothing_005",
+  "selected_by": "valid_macro_f1",
+  "selected_epoch": 4,
+  "valid": {
+    "accuracy": 0.6112637362637363,
+    "f1_macro": 0.6035426377470156,
+    "f1_weighted": 0.6172670711839164,
+    "mae": 0.6032800242377722,
+    "pearson": 0.6222576186310115
+  },
+  "class_metrics": [
+    {
+      "class_id": 0,
+      "class_name": "Negative",
+      "precision": 0.6306306306306306,
+      "recall": 0.6796116504854369,
+      "f1": 0.6542056074766355,
+      "support": 206
+    },
+    {
+      "class_id": 1,
+      "class_name": "Neutral",
+      "precision": 0.4406779661016949,
+      "recall": 0.5652173913043478,
+      "f1": 0.49523809523809526,
+      "support": 184
+    },
+    {
+      "class_id": 2,
+      "class_name": "Positive",
+      "precision": 0.7444444444444445,
+      "recall": 0.5946745562130178,
+      "f1": 0.6611842105263158,
+      "support": 338
+    }
+  ],
+  "best_epochs": {
+    "accuracy": 6,
+    "macro_f1": 4,
+    "mae": 5,
+    "joint": 6
+  },
+  "best_model_kind": {
+    "accuracy": "raw",
+    "macro_f1": "raw",
+    "mae": "raw",
+    "joint": "raw"
+  },
+  "selected_model_kind": "raw",
+  "trainable_params": 694879,
+  "gpu_memory_mb": 47.5185546875,
+  "training_seconds": 19.832696808851324,
+  "train_accuracy_at_selection": 0.6565537555228277,
+  "test_evaluated": false
+}
