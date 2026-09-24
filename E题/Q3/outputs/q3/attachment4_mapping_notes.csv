@@ -1,0 +1,21 @@
+sample_id,video_duration_sec,valid_len,raw_text_word_count,time_mapping_method,text_mapping_method,warning
+01,9.0,50,21,uniform_valid_grid_to_video_duration,proportional_raw_text_partition,official token and position timestamps unavailable
+02,3.3666666666666667,50,19,uniform_valid_grid_to_video_duration,proportional_raw_text_partition,official token and position timestamps unavailable;reported_frames=108;decoded_frames=101
+03,9.633333333333333,50,31,uniform_valid_grid_to_video_duration,proportional_raw_text_partition,official token and position timestamps unavailable;reported_frames=480;decoded_frames=289
+04,6.9,50,26,uniform_valid_grid_to_video_duration,proportional_raw_text_partition,official token and position timestamps unavailable;reported_frames=277;decoded_frames=207
+05,6.1,50,14,uniform_valid_grid_to_video_duration,proportional_raw_text_partition,official token and position timestamps unavailable
+06,8.233333333333333,50,35,uniform_valid_grid_to_video_duration,proportional_raw_text_partition,official token and position timestamps unavailable;reported_frames=292;decoded_frames=247
+07,21.3,50,58,uniform_valid_grid_to_video_duration,proportional_raw_text_partition,official token and position timestamps unavailable;reported_frames=723;decoded_frames=639
+08,4.966666666666667,50,11,uniform_valid_grid_to_video_duration,proportional_raw_text_partition,official token and position timestamps unavailable;reported_frames=239;decoded_frames=149
+09,5.033333333333333,50,17,uniform_valid_grid_to_video_duration,proportional_raw_text_partition,official token and position timestamps unavailable;reported_frames=339;decoded_frames=151
+10,9.833333333333334,50,29,uniform_valid_grid_to_video_duration,proportional_raw_text_partition,official token and position timestamps unavailable;reported_frames=325;decoded_frames=295
+11,5.8,50,14,uniform_valid_grid_to_video_duration,proportional_raw_text_partition,official token and position timestamps unavailable;reported_frames=342;decoded_frames=174
+12,12.933333333333334,50,41,uniform_valid_grid_to_video_duration,proportional_raw_text_partition,official token and position timestamps unavailable;reported_frames=609;decoded_frames=388
+13,8.666666666666666,50,30,uniform_valid_grid_to_video_duration,proportional_raw_text_partition,official token and position timestamps unavailable
+14,10.266666666666667,50,31,uniform_valid_grid_to_video_duration,proportional_raw_text_partition,official token and position timestamps unavailable;reported_frames=415;decoded_frames=308
+15,7.333333333333333,50,19,uniform_valid_grid_to_video_duration,proportional_raw_text_partition,official token and position timestamps unavailable
+16,3.1,50,11,uniform_valid_grid_to_video_duration,proportional_raw_text_partition,official token and position timestamps unavailable;reported_frames=167;decoded_frames=93
+17,9.633333333333333,50,24,uniform_valid_grid_to_video_duration,proportional_raw_text_partition,official token and position timestamps unavailable;reported_frames=419;decoded_frames=289
+18,18.7,50,50,uniform_valid_grid_to_video_duration,proportional_raw_text_partition,official token and position timestamps unavailable;reported_frames=686;decoded_frames=561
+19,13.633333333333333,50,36,uniform_valid_grid_to_video_duration,proportional_raw_text_partition,official token and position timestamps unavailable;reported_frames=561;decoded_frames=409
+20,10.866666666666667,50,43,uniform_valid_grid_to_video_duration,proportional_raw_text_partition,official token and position timestamps unavailable;reported_frames=561;decoded_frames=326
