@@ -1,5 +1,6 @@
 {
   "model": "Deployable_BERT_Last4",
+  "test_source": "Attachment 2 aligned_50.pkl internal labeled test split",
   "selected_on": "validation_joint",
   "selected_epoch": 25,
   "checkpoint": "outputs/q2_score_push/deployable_bert/partial_last4/best_joint.pt",

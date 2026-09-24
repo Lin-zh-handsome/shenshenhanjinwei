@@ -51,6 +51,7 @@ def main():
     write_csv(OUTPUT / 'test_confusion_matrix.csv', confusion_rows)
     result = {
         'model': cfg['run_name'],
+        'test_source': 'Attachment 2 aligned_50.pkl internal labeled test split',
         'selected_on': 'validation_joint',
         'selected_epoch': checkpoint['epoch'],
         'checkpoint': str(CHECKPOINT),

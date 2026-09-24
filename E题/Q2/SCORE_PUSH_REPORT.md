@@ -1,6 +1,6 @@
 # Q2 clean validation score push
 
-All model and checkpoint choices below use the official validation split. The test split was not evaluated in this round. The full experiment list is in `outputs/q2_score_push/score_push_ablation.csv`; predictions and per-class metrics are stored with each run.
+All model and checkpoint choices below use the official validation split. The labeled Attachment 2 test split was evaluated only after the user selected the final checkpoint; Attachment 3 was then used only for unlabeled inference. The full experiment list is in `outputs/q2_score_push/score_push_ablation.csv`; predictions and per-class metrics are stored with each run.
 
 ## Results
 
@@ -44,7 +44,7 @@ The clean validation targets (Accuracy 0.67, Macro-F1 0.64) were not reached. Th
 
 ## Final test evaluation after model selection
 
-After the user selected the validation classification winner, the saved `Deployable_BERT_Last4` epoch-25 `best_joint.pt` checkpoint was evaluated once on the official aligned test split. No model, seed, threshold, or hyperparameter was changed using this result.
+After the user selected the validation classification winner, the saved `Deployable_BERT_Last4` epoch-25 `best_joint.pt` checkpoint was evaluated once on the **labeled internal `test` split of Attachment 2 `aligned_50.pkl`** (727 samples). This is not Attachment 3. No model, seed, threshold, or hyperparameter was changed using this result.
 
 | Split | Samples | Accuracy | Macro-F1 | Weighted-F1 | MAE | Pearson | Neutral F1 |
 |---|---:|---:|---:|---:|---:|---:|---:|
@@ -52,3 +52,7 @@ After the user selected the validation classification winner, the saved `Deploya
 | Test | 727 | **0.6657** | **0.6025** | **0.6531** | **0.6771** | **0.6639** | **0.3516** |
 
 The test Neutral class had precision 0.4174, recall 0.3038, and F1 0.3516; 81 of its 158 examples were predicted Positive. This confirms that Neutral recognition remains the main weakness even though test Accuracy is higher than validation Accuracy. Detailed results are in `outputs/q2_score_push/deployable_bert/partial_last4/test_metrics.json`, `test_class_metrics.csv`, `test_confusion_matrix.csv`, and `test_predictions.csv`.
+
+## Attachment 3 inference
+
+The same selected checkpoint was used without retraining for the 30 separate aligned files in `附件3-模态缺失特征样本/对齐版本`. Its outputs are in `outputs/q2_score_push/deployable_bert/partial_last4/attachment3_predictions.csv`. Predicted counts were 2 Negative, 15 Neutral, and 13 Positive. These files contain no ground-truth sentiment labels, so no Accuracy, F1, MAE, or Pearson can be computed for Attachment 3. The clean-trained model has not been validated for the local missing-modality patterns in Attachment 3; these predictions should be treated as inference outputs, not performance evidence.

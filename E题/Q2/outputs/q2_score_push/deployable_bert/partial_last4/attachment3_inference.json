@@ -1,0 +1,13 @@
+{
+  "source": "/home/hanjinwei/math/data/E\u9898\u6570\u636e/\u9644\u4ef63-\u6a21\u6001\u7f3a\u5931\u7279\u5f81\u6837\u672c/\u5bf9\u9f50\u7248\u672c",
+  "checkpoint": "outputs/q2_score_push/deployable_bert/partial_last4/best_joint.pt",
+  "sample_count": 30,
+  "predicted_class_counts": {
+    "Negative": 2,
+    "Neutral": 15,
+    "Positive": 13
+  },
+  "ground_truth_available": false,
+  "metrics_computed": false,
+  "predictions_file": "outputs/q2_score_push/deployable_bert/partial_last4/attachment3_predictions.csv"
+}
