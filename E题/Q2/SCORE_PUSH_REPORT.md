@@ -40,4 +40,15 @@ Audio improves regression and slightly improves Macro-F1 relative to text only. 
 
 Neutral remains the weakest class in the best-accuracy model: precision 0.5321, recall 0.4511, F1 0.4882. A mild sampler targeting 30% Negative, 28% Neutral, 42% Positive raised Neutral recall to 0.6141 and F1 to 0.4956, but lowered Accuracy to 0.6016 and Macro-F1 to 0.6004; it is not selected. Three seeds 42/2026/3407 averaged Accuracy 0.6291 ± 0.0096 and Macro-F1 0.6075 ± 0.0047. Their probability ensemble improved Pearson to 0.6640 while lowering classification metrics against Run A.
 
-The clean validation targets (Accuracy 0.67, Macro-F1 0.64) were not reached. The deployable BERT model clears the lower 0.65/0.62 gate in neither metric, so this round does not authorize restoring the missing-data modules under the stated stage rule. No test result is claimed.
+The clean validation targets (Accuracy 0.67, Macro-F1 0.64) were not reached. The deployable BERT model clears the lower 0.65/0.62 gate in neither metric, so this round does not authorize restoring the missing-data modules under the stated stage rule. Model selection was completed without test results.
+
+## Final test evaluation after model selection
+
+After the user selected the validation classification winner, the saved `Deployable_BERT_Last4` epoch-25 `best_joint.pt` checkpoint was evaluated once on the official aligned test split. No model, seed, threshold, or hyperparameter was changed using this result.
+
+| Split | Samples | Accuracy | Macro-F1 | Weighted-F1 | MAE | Pearson | Neutral F1 |
+|---|---:|---:|---:|---:|---:|---:|---:|
+| Validation | 728 | 0.6429 | 0.6169 | 0.6383 | 0.6297 | 0.6159 | 0.4882 |
+| Test | 727 | **0.6657** | **0.6025** | **0.6531** | **0.6771** | **0.6639** | **0.3516** |
+
+The test Neutral class had precision 0.4174, recall 0.3038, and F1 0.3516; 81 of its 158 examples were predicted Positive. This confirms that Neutral recognition remains the main weakness even though test Accuracy is higher than validation Accuracy. Detailed results are in `outputs/q2_score_push/deployable_bert/partial_last4/test_metrics.json`, `test_class_metrics.csv`, `test_confusion_matrix.csv`, and `test_predictions.csv`.
