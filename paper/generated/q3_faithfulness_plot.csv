@@ -1,0 +1,5 @@
+condition,accuracy,macro_f1,mae,pearson,confidence_drop,source_file
+Full,0.6332417582417582,0.6193758628484983,0.6148771769504682,0.6576400464890945,,E题/Q3/outputs/q3_v2/faithfulness/final_b1_router/budget_025/valid_faithfulness_v2.json
+Keep-only Evidence,0.5398351648351648,0.4011770400413934,0.6721557806780726,0.6208598903824847,,E题/Q3/outputs/q3_v2/faithfulness/final_b1_router/budget_025/valid_faithfulness_v2.json
+Remove Evidence,0.5975274725274725,0.5631925357629797,0.6178368149618848,0.6405088180544364,0.05619012789575608,E题/Q3/outputs/q3_v2/faithfulness/final_b1_router/budget_025/valid_faithfulness_v2.json
+Random Remove,0.6160714285714286,0.5813813832095743,0.6116848864543679,0.6578727897830587,0.0329055235137815,E题/Q3/outputs/q3_v2/faithfulness/final_b1_router/budget_025/valid_faithfulness_v2.json

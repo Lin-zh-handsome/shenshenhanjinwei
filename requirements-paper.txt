@@ -1,0 +1,17 @@
+# Core imports used by the Q1/Q2/Q3 code and paper figure scripts.
+# Install a PyTorch build compatible with the host CUDA driver separately.
+torch
+transformers
+numpy
+pandas
+scipy
+scikit-learn
+PyYAML
+matplotlib
+librosa
+soundfile
+av
+mediapipe
+Pillow
+openpyxl
+opencv-python

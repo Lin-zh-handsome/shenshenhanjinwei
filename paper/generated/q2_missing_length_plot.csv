@@ -1,0 +1,4 @@
+length,accuracy,macro_f1,mae,pearson,source_file
+short,0.5906593406593407,0.5568576906514854,0.6736201094709731,0.5513152692539796,E题/Q2/outputs/q2_best_ablation/R3_reconstruction/missing_span_length_analysis.csv
+medium,0.5192307692307693,0.5041706955785347,0.7335769979895354,0.4334195858289186,E题/Q2/outputs/q2_best_ablation/R3_reconstruction/missing_span_length_analysis.csv
+long,0.4052197802197802,0.39593543373087076,0.7410105257339847,0.3470699190124648,E题/Q2/outputs/q2_best_ablation/R3_reconstruction/missing_span_length_analysis.csv

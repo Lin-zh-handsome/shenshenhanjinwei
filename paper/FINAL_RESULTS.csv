@@ -1,0 +1,5 @@
+problem,model,split,accuracy,macro_f1,weighted_f1,mae,pearson,source_file,notes
+Q1,50-window feature extraction and alignment,attachment1_unlabeled,,,,,,E题/Q1/validation_report.json,feature and alignment audit; no sentiment prediction metrics
+Q2,R3_Temporal_Reconstruction,clean_valid,0.6428571428571429,0.6168550613170211,0.6382983176644506,0.6296836485767067,0.6159404072107706,E题/Q2/outputs/q2_best_ablation/R3_reconstruction/metrics.json,official valid
+Q2,R3_Temporal_Reconstruction,missing_valid,0.6195054945054945,0.591968946902344,0.613393299645906,0.6686107960713843,0.5631318402737171,E题/Q2/outputs/q2_best_ablation/R3_reconstruction/metrics.json,official valid; missing is deterministic synthetic mixed spans
+Q3,FER-MSA v2 B1 + diagnostic Router,valid,0.6332417582417582,0.6193758628484983,0.6391797249568538,0.614877174565873,0.6576400459140526,E题/Q3/outputs/q3_v2/01_a1_reproduction/valid_metrics.json,B1 predictor; Router does not affect prediction

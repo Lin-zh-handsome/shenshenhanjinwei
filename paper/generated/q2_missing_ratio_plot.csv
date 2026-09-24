@@ -1,0 +1,6 @@
+ratio,accuracy,macro_f1,mae,pearson,source_file
+0.1,0.6414835164835165,0.615707560606215,0.6347326340776187,0.6097404010245172,E题/Q2/outputs/q2_best_ablation/R3_reconstruction/missing_ratio_analysis.csv
+0.2,0.6153846153846154,0.5870334225666243,0.666194967586377,0.5650891445545548,E题/Q2/outputs/q2_best_ablation/R3_reconstruction/missing_ratio_analysis.csv
+0.3,0.603021978021978,0.5697614005712597,0.6961307871909582,0.5242418571838291,E题/Q2/outputs/q2_best_ablation/R3_reconstruction/missing_ratio_analysis.csv
+0.4,0.5604395604395604,0.5319576518566579,0.7009658610208694,0.4924251792155638,E题/Q2/outputs/q2_best_ablation/R3_reconstruction/missing_ratio_analysis.csv
+0.5,0.5247252747252747,0.49699499233071504,0.7378963694762526,0.41966336708776025,E题/Q2/outputs/q2_best_ablation/R3_reconstruction/missing_ratio_analysis.csv

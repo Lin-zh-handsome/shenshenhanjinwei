@@ -1,0 +1,15 @@
+__pycache__/
+*.py[cod]
+.ipynb_checkpoints/
+.DS_Store
+Thumbs.db
+*.log
+*.tmp
+
+# Future local data and model caches. Existing tracked paper artifacts remain tracked.
+/data/
+/datasets/
+models--bert-base-uncased/
+*.mp4
+*.avi
+*.mov

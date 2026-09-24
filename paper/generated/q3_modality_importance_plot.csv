@@ -1,0 +1,4 @@
+modality,main_count,main_fraction,mean_lomo_importance,source_file
+text,506,0.695054945054945,0.61399727969195,E题/Q3/outputs/q3_v2/faithfulness/final_b1_router/budget_025/valid_explanations.csv
+audio,0,0.0,0.05047175587154285,E题/Q3/outputs/q3_v2/faithfulness/final_b1_router/budget_025/valid_explanations.csv
+vision,222,0.30494505494505497,0.33553096501970314,E题/Q3/outputs/q3_v2/faithfulness/final_b1_router/budget_025/valid_explanations.csv

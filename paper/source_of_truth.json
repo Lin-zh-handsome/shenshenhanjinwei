@@ -1,0 +1,22 @@
+{
+  "q1_validation": "E题/Q1/validation_report.json",
+  "q1_manifest": "E题/Q1/q1_manifest.csv",
+  "q1_features": "E题/Q1/q1_features.npz",
+  "q1_config": "E题/Q1/feature_config.yaml",
+  "q2_config": "E题/Q2/configs/best_R3_reconstruction.yaml",
+  "q2_validation": "E题/Q2/outputs/q2_best_ablation/R3_reconstruction/metrics.json",
+  "q2_ablation": "E题/Q2/outputs/q2_best_ablation/ablation_table.csv",
+  "q2_missing_modality": "E题/Q2/outputs/q2_best_ablation/R3_reconstruction/missing_modality_analysis.csv",
+  "q2_missing_ratio": "E题/Q2/outputs/q2_best_ablation/R3_reconstruction/missing_ratio_analysis.csv",
+  "q2_missing_position": "E题/Q2/outputs/q2_best_ablation/R3_reconstruction/missing_position_analysis.csv",
+  "q2_missing_length": "E题/Q2/outputs/q2_best_ablation/R3_reconstruction/missing_span_length_analysis.csv",
+  "q2_attachment3": "E题/Q2/outputs/q2_best_ablation/R3_reconstruction/attachment3_predictions_compact.csv",
+  "q3_config": "E题/Q3/configs/q3_v2_final.yaml",
+  "q3_validation": "E题/Q3/outputs/q3_v2/01_a1_reproduction/valid_metrics.json",
+  "q3_ablation": "E题/Q3/outputs/q3_v2/ablation_v2.csv",
+  "q3_faithfulness": "E题/Q3/outputs/q3_v2/faithfulness/final_b1_router/budget_025/valid_faithfulness_v2.json",
+  "q3_explanations": "E题/Q3/outputs/q3_v2/faithfulness/final_b1_router/budget_025/valid_explanations.csv",
+  "q3_attachment4": "E题/Q3/outputs/q3_v2/attachment4/attachment4_predictions_explanations.csv",
+  "q3_attachment4_evidence": "E题/Q3/outputs/q3_v2/attachment4/attachment4_explanations_long.csv",
+  "q3_mapping": "E题/Q3/outputs/q3_v2/attachment4/attachment4_mapping_notes.csv"
+}

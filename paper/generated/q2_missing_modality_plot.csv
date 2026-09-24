@@ -1,0 +1,7 @@
+modality,accuracy,macro_f1,mae,pearson,source_file
+T,0.6043956043956044,0.5711180225006164,0.698071463911949,0.5250656789075993,E题/Q2/outputs/q2_best_ablation/R3_reconstruction/missing_modality_analysis.csv
+A,0.6428571428571429,0.6170525519581315,0.6300547379836604,0.6154827181264763,E题/Q2/outputs/q2_best_ablation/R3_reconstruction/missing_modality_analysis.csv
+V,0.6208791208791209,0.5897157746720926,0.6202721168542317,0.6155076970488124,E题/Q2/outputs/q2_best_ablation/R3_reconstruction/missing_modality_analysis.csv
+TA,0.6043956043956044,0.5711758835301767,0.6982858218748383,0.525105952429443,E题/Q2/outputs/q2_best_ablation/R3_reconstruction/missing_modality_analysis.csv
+TV,0.6002747252747253,0.5667393958457961,0.6959808303496114,0.5243515553701785,E题/Q2/outputs/q2_best_ablation/R3_reconstruction/missing_modality_analysis.csv
+AV,0.6208791208791209,0.589615051252649,0.620556923741178,0.6149184757262321,E题/Q2/outputs/q2_best_ablation/R3_reconstruction/missing_modality_analysis.csv
