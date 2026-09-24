@@ -27,6 +27,16 @@ python -m pip install -i https://pypi.tuna.tsinghua.edu.cn/simple -r code/requir
 
 `model_parameters/best_bert_last4_compact.pt` 只保存后四层 BERT 的逐行 int8（8 位整数量化）权重、其余小张量的浮点权重及下游模型权重。运行时需先取得公开的 `bert-base-uncased` 基础模型，再由 `code/score_push/compact_best_model.py` 还原。紧凑包不是原始 checkpoint 的无损压缩；独立验证集复核见 `results/compact_validation_metrics.json`：Accuracy 0.6415、Macro-F1 0.6164、MAE 0.6299、Pearson 0.6153。相比原始版，validation 中约一条分类预测改变。
 
+若要从附件 2 重新训练，先编辑 `code/diagnostics/oracle_text.yaml` 与 `code/score_push/bert_last4.yaml` 的数据/基础模型路径，再依次运行：
+
+```bash
+cd code
+PYTHONPATH=. python diagnostics/oracle_text.py --config diagnostics/oracle_text.yaml
+PYTHONPATH=. python diagnostics/oracle_text.py --config score_push/bert_last4.yaml
+```
+
+第一阶段生成 `outputs/q2_v2/01_run_a_oracle_text/best_macro_f1.pt`；第二阶段从它初始化并生成 `outputs/q2_score_push/deployable_bert/partial_last4/best_joint.pt`。完整路径、环境、数据口径与复核步骤见材料包根目录的 `REPRODUCE_Q1_Q2.md`。
+
 从本目录运行紧凑参数验证：
 
 ```bash

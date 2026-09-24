@@ -23,7 +23,8 @@ def main():
     code = PACKAGE / 'Q2/code'
     code_files = [
         'data/aligned_dataset.py', 'data/attachment3_dataset.py',
-        'diagnostics/oracle_text.py', 'utils/metrics.py', 'utils/seed.py',
+        'diagnostics/oracle_text.py', 'diagnostics/oracle_text.yaml',
+        'utils/metrics.py', 'utils/seed.py',
         'score_push/bert_last4.yaml', 'score_push/infer_attachment3_best.py',
         'score_push/compact_best_model.py', 'score_push/evaluate_selected_test.py',
     ]
@@ -32,13 +33,14 @@ def main():
     (code / 'requirements.txt').write_text(
         'numpy>=1.26\ntorch>=2.2\ntransformers>=4.45\n'
         'scikit-learn>=1.4\nPyYAML>=6.0\n', encoding='utf-8')
-    config = code / 'score_push/bert_last4.yaml'
-    text = config.read_text(encoding='utf-8')
-    text = text.replace('/home/hanjinwei/math/data/E题数据/附件2-数据集特征文件/aligned_50.pkl',
-                        '/path/to/aligned_50.pkl')
-    text = text.replace('/home/hanjinwei/math/model_cache/bert-base-uncased',
-                        '/path/to/bert-base-uncased')
-    config.write_text(text, encoding='utf-8')
+    for relative in ('diagnostics/oracle_text.yaml', 'score_push/bert_last4.yaml'):
+        config = code / relative
+        text = config.read_text(encoding='utf-8')
+        text = text.replace('/home/hanjinwei/math/data/E题数据/附件2-数据集特征文件/aligned_50.pkl',
+                            '/path/to/aligned_50.pkl')
+        text = text.replace('/home/hanjinwei/math/model_cache/bert-base-uncased',
+                            '/path/to/bert-base-uncased')
+        config.write_text(text, encoding='utf-8')
     selected = Q2 / 'outputs/q2_score_push/deployable_bert/partial_last4'
     results = PACKAGE / 'Q2/results'
     result_files = [
