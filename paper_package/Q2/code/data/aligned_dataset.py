@@ -2,6 +2,19 @@ import pickle
 import numpy as np
 import torch
 from torch.utils.data import Dataset
+from data.mask_utils import base_masks
+
+
+def integer_text_bert(value):
+    raw = np.asarray(value)
+    if not np.isfinite(raw).all():
+        raise ValueError('text_bert contains NaN or Inf')
+    if np.issubdtype(raw.dtype, np.floating):
+        rounded = np.rint(raw)
+        if not np.allclose(raw, rounded, rtol=0, atol=1e-4):
+            raise ValueError('text_bert contains fractional token values')
+        raw = rounded
+    return raw.astype(np.int64)
 
 
 def load_aligned(path):
@@ -29,7 +42,7 @@ class AlignedMoseiDataset(Dataset):
         self.split = split
         x = source[split] if source is not None else load_aligned(pkl_path)[split]
         self.ids = [str(v) for v in x['id']]
-        self.text_bert = np.asarray(x['text_bert'], dtype=np.int64)
+        self.text_bert = integer_text_bert(x['text_bert'])
         self.text_teacher = np.asarray(x['text'], dtype=np.float32)
         self.audio = np.asarray(x['audio'], dtype=np.float32)
         self.vision = np.asarray(x['vision'], dtype=np.float32)
@@ -40,7 +53,11 @@ class AlignedMoseiDataset(Dataset):
         return len(self.ids)
 
     def __getitem__(self, idx):
-        return {'id': self.ids[idx], 'text_bert': torch.from_numpy(self.text_bert[idx]),
+        sample = {'id': self.ids[idx], 'text_bert': torch.from_numpy(self.text_bert[idx]),
                 'text_teacher': torch.from_numpy(self.text_teacher[idx]),
                 'audio': torch.from_numpy(self.audio[idx]), 'vision': torch.from_numpy(self.vision[idx]),
                 'y_cls': torch.tensor(self.y_cls[idx]), 'y_reg': torch.tensor(self.y_reg[idx])}
+        masks = base_masks(sample['text_bert'].unsqueeze(0), sample['audio'].unsqueeze(0),
+                           sample['vision'].unsqueeze(0))
+        sample.update({key: value.squeeze(0) for key, value in masks.items()})
+        return sample

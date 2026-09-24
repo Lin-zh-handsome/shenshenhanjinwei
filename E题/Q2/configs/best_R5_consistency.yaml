@@ -1,0 +1,37 @@
+run_name: R5_Clean_Masked_Consistency
+aligned_pkl: /path/to/aligned_50.pkl
+output_dir: outputs/q2_best_ablation/R5_consistency
+init_checkpoint: outputs/q2_score_push/deployable_bert/partial_last4/best_joint.pt
+seed: 42
+model:
+  text_mode: pretrained_bert
+  bert:
+    model_name: bert-base-uncased
+    local_path: /path/to/bert-base-uncased
+    mode: partial
+    unfreeze_last_n: 4
+  d_model: 128
+  heads: 4
+  temporal_layers: 1
+  dropout: 0.15
+  use_position: false
+  fusion_mode: concat
+  head_mode: flat
+  regression_head_mode: linear
+  modalities: TAV
+  use_span_geometry: true
+  use_reconstruction: true
+  use_reliability: true
+batch_size: 16
+epochs: 20
+min_epochs: 14
+patience: 6
+lr: 0.001
+weight_decay: 0.0001
+warmup_ratio: 0.05
+lambda_reg: 0.5
+lambda_recon: 0.1
+lambda_cons: 0.1
+freeze_clean_backbone: true
+grad_clip: 1.0
+amp: true

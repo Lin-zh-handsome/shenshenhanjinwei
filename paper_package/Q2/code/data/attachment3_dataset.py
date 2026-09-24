@@ -4,6 +4,8 @@ import re
 import numpy as np
 import torch
 from torch.utils.data import Dataset
+from data.aligned_dataset import integer_text_bert
+from data.mask_utils import base_masks, infer_missing_candidates, sequence_valid_from_signals
 
 
 def natural_key(path):
@@ -33,11 +35,18 @@ class Attachment3AlignedDataset(Dataset):
             if a.shape != shape or not np.isfinite(a).all():
                 raise ValueError(f'{path}:{key} shape={a.shape}')
             if key == 'text_bert':
-                if np.max(np.abs(a - np.rint(a))) > 1e-3:
-                    raise ValueError(f'{path}: fractional token values')
-                a = np.rint(a).astype(np.int64)
+                a = integer_text_bert(a)
             else:
                 a = a.astype(np.float32)
             out[key] = torch.from_numpy(a.copy())
         out['sample_id'] = path.stem
+        text_bert = out['text_bert'].unsqueeze(0)
+        audio = out['audio'].unsqueeze(0)
+        vision = out['vision'].unsqueeze(0)
+        valid = sequence_valid_from_signals(text_bert, audio, vision)
+        candidates = infer_missing_candidates(text_bert, audio, vision, valid)
+        observed = {key: valid & ~candidates[modality] for modality, key in
+                    (('T', 'text'), ('A', 'audio'), ('V', 'vision'))}
+        masks = base_masks(text_bert, audio, vision, observed=observed)
+        out.update({key: value.squeeze(0) for key, value in masks.items()})
         return out

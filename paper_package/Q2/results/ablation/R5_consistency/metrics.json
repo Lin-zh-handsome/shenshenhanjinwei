@@ -1,0 +1,119 @@
+{
+  "run_name": "R5_Clean_Masked_Consistency",
+  "selected_epoch": 6,
+  "best_epochs": {
+    "accuracy": 6,
+    "macro_f1": 6,
+    "mae": 12,
+    "pearson": 14,
+    "classification": 6
+  },
+  "selected_by": "validation_balanced_classification",
+  "clean_valid": {
+    "accuracy": 0.6291208791208791,
+    "f1_macro": 0.60751298765418,
+    "f1_weighted": 0.6274908798770151,
+    "mae": 0.6252172746864124,
+    "pearson": 0.6153161429234465
+  },
+  "missing_valid": {
+    "accuracy": 0.6208791208791209,
+    "f1_macro": 0.5964725575760417,
+    "f1_weighted": 0.6173916274397272,
+    "mae": 0.6656814377526573,
+    "pearson": 0.5697529234672325
+  },
+  "class_metrics": [
+    {
+      "class_id": 0,
+      "class_name": "Negative",
+      "precision": 0.6390243902439025,
+      "recall": 0.6359223300970874,
+      "f1": 0.6374695863746959,
+      "support": 206
+    },
+    {
+      "class_id": 1,
+      "class_name": "Neutral",
+      "precision": 0.5028901734104047,
+      "recall": 0.47282608695652173,
+      "f1": 0.48739495798319327,
+      "support": 184
+    },
+    {
+      "class_id": 2,
+      "class_name": "Positive",
+      "precision": 0.6857142857142857,
+      "recall": 0.7100591715976331,
+      "f1": 0.6976744186046512,
+      "support": 338
+    }
+  ],
+  "missing_class_metrics": [
+    {
+      "class_id": 0,
+      "class_name": "Negative",
+      "precision": 0.6350710900473934,
+      "recall": 0.6504854368932039,
+      "f1": 0.6426858513189448,
+      "support": 206
+    },
+    {
+      "class_id": 1,
+      "class_name": "Neutral",
+      "precision": 0.4906832298136646,
+      "recall": 0.42934782608695654,
+      "f1": 0.4579710144927536,
+      "support": 184
+    },
+    {
+      "class_id": 2,
+      "class_name": "Positive",
+      "precision": 0.6713483146067416,
+      "recall": 0.7071005917159763,
+      "f1": 0.6887608069164265,
+      "support": 338
+    }
+  ],
+  "confusion_matrix": [
+    {
+      "true_class": "Negative",
+      "pred_negative": 131,
+      "pred_neutral": 29,
+      "pred_positive": 46
+    },
+    {
+      "true_class": "Neutral",
+      "pred_negative": 33,
+      "pred_neutral": 87,
+      "pred_positive": 64
+    },
+    {
+      "true_class": "Positive",
+      "pred_negative": 41,
+      "pred_neutral": 57,
+      "pred_positive": 240
+    }
+  ],
+  "missing_confusion_matrix": [
+    {
+      "true_class": "Negative",
+      "pred_negative": 134,
+      "pred_neutral": 27,
+      "pred_positive": 45
+    },
+    {
+      "true_class": "Neutral",
+      "pred_negative": 33,
+      "pred_neutral": 79,
+      "pred_positive": 72
+    },
+    {
+      "true_class": "Positive",
+      "pred_negative": 44,
+      "pred_neutral": 55,
+      "pred_positive": 239
+    }
+  ],
+  "test_evaluated": false
+}

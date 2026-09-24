@@ -6,3 +6,5 @@ outputs/q2_v2/**/*.pt
 outputs/q2_score_push/**/*.pt
 outputs/q2_preliminary_stopped_*/
 *.log
+
+outputs/q2_best_ablation/**/*.pt
