@@ -61,4 +61,4 @@ Diagnostic only: Router → router_text/audio/vision
 
 ## 运行与复现边界
 
-`configs/q3_v2_*.yaml` 保留数据路径占位符，使用时需指向附件 2 的 aligned_50 和附件 4 的对齐特征／视频。训练、解释评估、LOMO 稳定性、附件 4 清单与最终推理脚本位于 `E题/Q3`；服务器上的模型权重和图片未纳入 Git 提交。`outputs/q3_v2` 中提交 CSV、JSON 和本报告所需的文本结果。公开结果允许审查指标与推理逻辑，但从 Git 单独下载不能直接获得模型参数。
+`configs/q3_v2_*.yaml` 保留数据路径占位符，使用时需指向附件 2 的 aligned_50 和附件 4 的对齐特征／视频。训练、解释评估、LOMO 稳定性、附件 4 清单与最终推理脚本位于 `E题/Q3`。最终模型参数、train 基线、附件 4 的预测与解释 CSV、解释卡和关键帧均已提交；中间 checkpoint、日志及缓存仍保留在服务器。完整运行步骤见 `Q3_V2_REPRODUCE.md`。

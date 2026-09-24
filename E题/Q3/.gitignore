@@ -1,9 +1,13 @@
 __pycache__/
 *.pyc
 outputs/q3_v2/**/*.pt
+!outputs/q3_v2/final_model.pt
 outputs/q3_v2/**/*.png
+!outputs/q3_v2/attachment4/explanation_cards/*.png
 outputs/q3_v2/**/*.jpg
+!outputs/q3_v2/attachment4/evidence_frames/*.jpg
 outputs/q3_v2/**/*.npz
+!outputs/q3_v2/train_feature_baselines.npz
+!outputs/q3_v2/train_feature_position_baselines.npz
 outputs/q3_v2/**/*.log
-outputs/q3_v2/*.npz
 outputs/q3_v2/*.log

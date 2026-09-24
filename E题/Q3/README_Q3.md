@@ -1,6 +1,6 @@
 # Q3 FER-MSA 工程
 
-> **Q3 v2 最终选择：** 基于 validation 的 B1 复现模型；Router 仅作诊断，证据预算 0.25。新代码、结果和复现边界见 [Q3_FAITHFULNESS_V2_REPORT.md](Q3_FAITHFULNESS_V2_REPORT.md)。下文记录 v1 历史实验，A5 不再默认是最终模型。
+> **Q3 v2 最终选择：** 基于 validation 的 B1 复现模型；Router 仅作诊断，证据预算 0.25。新结果见 [Q3_FAITHFULNESS_V2_REPORT.md](Q3_FAITHFULNESS_V2_REPORT.md)，权重、配置与运行命令见 [Q3_V2_REPRODUCE.md](Q3_V2_REPRODUCE.md)。下文记录 v1 历史实验，A5 不再默认是最终模型。
 
 FER-MSA（Faithful Evidence Routing for Multimodal Sentiment Analysis，忠实证据路由多模态情感模型）按执行规范完成三分类、`[-3,3]` 情感强度回归、模态作用程度和局部证据输出。实验在服务器 GPU 上完成。
 
