@@ -24,13 +24,15 @@
 
 ## 第 3 章 / 问题 3
 
+[第三章正文草稿](q3/Q3_CHAPTER_DRAFT.md)按赛题要求汇集模型、典型解释卡、局部热图、附件四全量摘要、验证结果与错误分析。
+
 | 内容 | 来源 |
 |---|---|
 | 数据 | `E题/Q3/data/aligned_dataset.py`、`attachment4_dataset.py`、`data/feature_baseline.py` |
 | 方法 | `E题/Q3/models/fer_msa.py`、`modality_encoder.py`、`evidence_gate.py`、`prediction_heads.py`；[Q3_METHOD](q3/Q3_METHOD.md) |
 | 公式/Loss | `E题/Q3/losses/explainable_multitask_loss.py`；LOMO 在 `explain/modality_ablation.py`，局部遮挡在 `explain/local_occlusion.py` |
 | 表 | [主结果](tables/table_q3_main_results.md)、[消融](tables/table_q3_ablation.md)、[faithfulness](tables/table_q3_faithfulness.md) |
-| 图 | [Q3 图索引](q3/Q3_FIGURES.md)、`E题/Q3/outputs/q3_v2/attachment4/explanation_cards/` |
+| 图 | [Q3 图索引](q3/Q3_FIGURES.md)、[自注意力热图](figures/q3_attention_07_modalities.png)、`E题/Q3/outputs/q3_v2/attachment4/explanation_cards/` |
 | 结果 | B1 `01_a1_reproduction/valid_metrics.json`、最终预算 0.25 faithfulness JSON、[解释卡索引](q3/Q3_EXPLANATION_CARD_INDEX.csv) |
 
 所有相对路径以仓库根目录为起点。写结论前核对 [证据矩阵](CLAIM_EVIDENCE_MATRIX.md) 与 [禁止误写清单](PAPER_CAUTION.md)。

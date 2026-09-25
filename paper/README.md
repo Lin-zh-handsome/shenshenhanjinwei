@@ -11,4 +11,6 @@
 | 复现/提交 | [复现](REPRODUCTION.md)、[提交清单](SUBMISSION_MANIFEST.md) |
 | 避免误写 | [注意事项](PAPER_CAUTION.md)、[数值冲突报告](RESULT_INCONSISTENCIES.md) |
 
+问题三可直接从[第三章正文草稿](q3/Q3_CHAPTER_DRAFT.md)开始写作；其中已区分模型内部自注意力、局部证据重要性与遮挡核验。
+
 重新生成轻量结果：在仓库根目录执行 `python paper/scripts/build_all.py`。该命令只读取已存在的 CSV/JSON 和文件元数据，不运行模型。
